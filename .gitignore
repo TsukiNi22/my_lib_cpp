@@ -1,0 +1,19 @@
+## Compilation
+*.o
+*.a
+a.out
+
+## Vim
+*.sw*
+\#*#
+*~
+:
+q
+vg
+z
+
+## CMake
+build/
+
+## Other
+.info
