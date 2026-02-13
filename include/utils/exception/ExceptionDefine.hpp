@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionDefine.hpp
@@ -17,7 +17,7 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include <iostream>
+    #include <cstdint>  // std::size_t
 
     //----------------------------------------------------------------//
     /* DEFINE */
@@ -34,22 +34,22 @@ namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
 /* TYPEDEF */
 
-/* Definition of the different exception code */
-enum Code {
-    Undefined = 0,
-};
-
-/* Corresponding exception message for each code */
-inline constexpr const char *Message[] = {
-    /* Undefined */ "An undefined error has occured",
-};
-
 /* Definition of the different exception type */
 enum Type {
     None    = 0b1, // Exception like Exit, does nothing (ignore other type)
     Fatal   = 0b10,
     Error   = 0b100,
     Warning = 0b1000,
+};
+
+/* Definition of the different exception code */
+enum class Code: std::size_t {
+    Undefined = 0,
+};
+
+/* Corresponding exception message for each code */
+inline constexpr const char *Message[] = {
+    /* Undefined */ "An undefined error has occured",
 };
 
 } // namespace end

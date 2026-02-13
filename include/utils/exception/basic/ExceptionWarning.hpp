@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionWarning.hpp
@@ -17,7 +17,8 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "../AException.hpp"   // utils::exception::AException
+    #include "../AException.hpp"    // utils::exception::AException
+    #include <source_location>      // std::source_location
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
@@ -30,7 +31,7 @@ class ExceptionWarning: virtual public utils::exception::AException {
         ExceptionWarning& operator=(ExceptionWarning&& object) = delete;
 
         // ---------- Constructor --------- //
-        ExceptionWarning(utils::exception::Code code = utils::exception::Code::Undefined) : AException(utils::exception::Type::Warning, code) {};
+        ExceptionWarning(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Warning, code) {};
         ExceptionWarning(const ExceptionWarning& object) = delete;
         ExceptionWarning(ExceptionWarning&& object) = delete;
 

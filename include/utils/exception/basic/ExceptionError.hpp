@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionError.hpp
@@ -17,7 +17,8 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "../AException.hpp"   // utils::exception::AException
+    #include "../AException.hpp"    // utils::exception::AException
+    #include <source_location>      // std::source_location
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
@@ -30,7 +31,7 @@ class ExceptionError: virtual public utils::exception::AException {
         ExceptionError& operator=(ExceptionError&& object) = delete;
 
         // ---------- Constructor --------- //
-        ExceptionError(utils::exception::Code code = utils::exception::Code::Undefined) : AException(utils::exception::Type::Error | utils::exception::Type::Fatal, code) {};
+        ExceptionError(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Error | utils::exception::Type::Fatal, code) {};
         ExceptionError(const ExceptionError& object) = delete;
         ExceptionError(ExceptionError&& object) = delete;
 

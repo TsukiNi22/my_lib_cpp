@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file Utils.hpp
@@ -23,6 +23,7 @@ File Description:
     /* Activate all handling include */
     #ifdef _Handling
         #define _Exception
+        #define _Write
     #endif
 
     //----------------------------------------------------------------//
@@ -37,6 +38,16 @@ File Description:
         #include "utils/exception/basic/ExceptionError.hpp"     // utils::exception::Error
         #include "utils/exception/basic/ExceptionWarning.hpp"   // utils::exception::Warning
         #include "utils/exception/custom/ExceptionCustom.hpp"   // utils::exception::Custom
+    #endif
+
+    /* Write */
+    #ifdef _Write
+        // -> Handling of the edit for the ouput/input display
+        // -> Define some special char & other
+        #include "utils/write/Color.hpp"    // utils::write::Color, utils::write::BackColor
+        #include "utils/write/Char.hpp"     // utils::write::Char
+        #include "utils/write/Define.hpp"   // utils::write::
+        #include "utils/write/Macro.hpp"    // utils::write::
     #endif
 
 #endif /* UTILS_H */

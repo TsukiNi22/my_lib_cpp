@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file IException.hpp
@@ -32,7 +32,8 @@ class IException: virtual public std::exception {
         virtual bool isNone() const noexcept = 0;
         virtual bool isFatal() const noexcept = 0;
         virtual const char* what() const noexcept = 0;
-        virtual const char* formated() const noexcept = 0;
+        virtual const char* info() const noexcept = 0;
+        virtual std::string formated() const noexcept = 0;
 
         // ------------ Operator ---------- //
         IException& operator=(const IException& object) = delete;

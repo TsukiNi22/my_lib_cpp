@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 12/02/2026 by @author Tsukini
+##  @date 13/02/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.cpp
@@ -12,9 +12,12 @@ File Description:
 
 #include "utils/exception/ExceptionDefine.hpp"  // utils::exception::Message
 #include "utils/exception/AException.hpp"       // utils::exception::AException
+#include <sstream>                              // std::ostringstream
+#include <string>                               // std::string
 
-const char* utils::exception::AException::formated()
+std::string utils::exception::AException::formated()
 const noexcept {
-    /* Nothing for now */
-    return utils::exception::Message[this->_code];
+    std::ostringstream oss;
+    //oss << ;
+    return oss.str();
 }
