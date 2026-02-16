@@ -3,15 +3,15 @@ Edition:
 ##  @date 16/02/2026 by @author Tsukini
 
 File Name:
-##  @file ExceptionNone.hpp
+##  @file WarningException.hpp
 
 File Description:
 ##  You know, I don t think there are good or bad descriptions,
 ##  for me, life is all about functions...
 \**************************************************************/
 
-#ifndef EXCEPTIONNONE_H
-    #define EXCEPTIONNONE_H
+#ifndef WARNINGEXCEPTION_H
+    #define WARNINGEXCEPTION_H
 
     //----------------------------------------------------------------//
     /* INCLUDE */
@@ -25,20 +25,20 @@ namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
 /* CLASS */
 
-class ExceptionNone: virtual public utils::exception::AException {
+class WarningException: virtual public utils::exception::AException {
     public:
         // ------------ Operator ---------- //
-        ExceptionNone& operator=(const ExceptionNone& object) = delete;
-        ExceptionNone& operator=(ExceptionNone&& object) = delete;
+        WarningException& operator=(const WarningException& object) = delete;
+        WarningException& operator=(WarningException&& object) = delete;
 
         // ---------- Constructor --------- //
-        ExceptionNone(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::None, code) {};
-        ExceptionNone(const ExceptionNone& object) = delete;
-        ExceptionNone(ExceptionNone&& object) = delete;
+        WarningException(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Warning, code) {};
+        WarningException(const WarningException& object) = delete;
+        WarningException(WarningException&& object) = delete;
 
         // ----------- Destructor --------- //
-        ~ExceptionNone() = default;
+        ~WarningException() = default;
 };
 
 } // namespace end
-#endif /* EXCEPTIONNONE_H */
+#endif /* WARNINGEXCEPTION_H */

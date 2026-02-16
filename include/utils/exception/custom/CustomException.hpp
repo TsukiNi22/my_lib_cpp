@@ -3,15 +3,15 @@ Edition:
 ##  @date 16/02/2026 by @author Tsukini
 
 File Name:
-##  @file ExceptionCustom.hpp
+##  @file CustomException.hpp
 
 File Description:
 ##  You know, I don t think there are good or bad descriptions,
 ##  for me, life is all about functions...
 \**************************************************************/
 
-#ifndef EXCEPTIONCUSTOM_H
-    #define EXCEPTIONCUSTOM_H
+#ifndef CUSTOMEXCEPTION_H
+    #define CUSTOMEXCEPTION_H
 
     //----------------------------------------------------------------//
     /* INCLUDE */
@@ -26,21 +26,21 @@ namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
 /* CLASS */
 
-class ExceptionCustom: virtual public utils::exception::AException {
+class CustomException: virtual public utils::exception::AException {
     public:
         // ------------ Operator ---------- //
-        ExceptionCustom& operator=(const ExceptionCustom& object) = delete;
-        ExceptionCustom& operator=(ExceptionCustom&& object) = delete;
+        CustomException& operator=(const CustomException& object) = delete;
+        CustomException& operator=(CustomException&& object) = delete;
 
         // ---------- Constructor --------- //
-        ExceptionCustom(std::size_t type = utils::exception::Type::None, std::string info = "[None]", std::source_location loc = std::source_location::current()) : AException(loc, type, utils::exception::Code::Undefined, info) {};
-        ExceptionCustom(std::size_t type = utils::exception::Type::None, utils::exception::Code code = utils::exception::Code::Undefined, std::string info = "[None]", std::source_location loc = std::source_location::current()) : AException(loc, type, code, info) {};
-        ExceptionCustom(const ExceptionCustom& object) = delete;
-        ExceptionCustom(ExceptionCustom&& object) = delete;
+        CustomException(std::size_t type = utils::exception::Type::None, std::string info = "[None]", std::source_location loc = std::source_location::current()) : AException(loc, type, utils::exception::Code::Undefined, info) {};
+        CustomException(std::size_t type = utils::exception::Type::None, utils::exception::Code code = utils::exception::Code::Undefined, std::string info = "[None]", std::source_location loc = std::source_location::current()) : AException(loc, type, code, info) {};
+        CustomException(const CustomException& object) = delete;
+        CustomException(CustomException&& object) = delete;
 
         // ----------- Destructor --------- //
-        ~ExceptionCustom() = default;
+        ~CustomException() = default;
 };
 
 } // namespace end
-#endif /* EXCEPTIONCUSTOM_H */
+#endif /* CUSTOMEXCEPTION_H */

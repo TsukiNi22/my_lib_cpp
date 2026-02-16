@@ -3,15 +3,15 @@ Edition:
 ##  @date 16/02/2026 by @author Tsukini
 
 File Name:
-##  @file ExceptionWarning.hpp
+##  @file ErrorException.hpp
 
 File Description:
 ##  You know, I don t think there are good or bad descriptions,
 ##  for me, life is all about functions...
 \**************************************************************/
 
-#ifndef EXCEPTIONWARNING_H
-    #define EXCEPTIONWARNING_H
+#ifndef ERROREXCEPTION_H
+    #define ERROREXCEPTION_H
 
     //----------------------------------------------------------------//
     /* INCLUDE */
@@ -25,20 +25,20 @@ namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
 /* CLASS */
 
-class ExceptionWarning: virtual public utils::exception::AException {
+class ErrorException: virtual public utils::exception::AException {
     public:
         // ------------ Operator ---------- //
-        ExceptionWarning& operator=(const ExceptionWarning& object) = delete;
-        ExceptionWarning& operator=(ExceptionWarning&& object) = delete;
+        ErrorException& operator=(const ErrorException& object) = delete;
+        ErrorException& operator=(ErrorException&& object) = delete;
 
         // ---------- Constructor --------- //
-        ExceptionWarning(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Warning, code) {};
-        ExceptionWarning(const ExceptionWarning& object) = delete;
-        ExceptionWarning(ExceptionWarning&& object) = delete;
+        ErrorException(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Error | utils::exception::Type::Fatal, code) {};
+        ErrorException(const ErrorException& object) = delete;
+        ErrorException(ErrorException&& object) = delete;
 
         // ----------- Destructor --------- //
-        ~ExceptionWarning() = default;
+        ~ErrorException() = default;
 };
 
 } // namespace end
-#endif /* EXCEPTIONWARNING_H */
+#endif /* ERROREXCEPTION_H */
