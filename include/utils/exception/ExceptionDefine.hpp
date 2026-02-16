@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 13/02/2026 by @author Tsukini
+##  @date 16/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionDefine.hpp
@@ -12,12 +12,6 @@ File Description:
 
 #ifndef EXCEPTIONDEFINE_H
     #define EXCEPTIONDEFINE_H
-
-    //----------------------------------------------------------------//
-    /* INCLUDE */
-
-    /* type */
-    #include <cstdint>  // std::size_t
 
     //----------------------------------------------------------------//
     /* DEFINE */
@@ -43,7 +37,7 @@ enum Type {
 };
 
 /* Definition of the different exception code */
-enum class Code: std::size_t {
+enum Code {
     Undefined = 0,
 };
 

@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 13/02/2026 by @author Tsukini
+##  @date 16/02/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.hpp
@@ -31,8 +31,8 @@ class AException: virtual public utils::exception::IException {
     protected:
         /* Exception call info */
         const char* _file = nullptr;
-        std::size_t _line = std::numeric_limits<std::size_t>::max();
         const char* _func = nullptr;
+        std::size_t _line = std::numeric_limits<std::size_t>::max();
 
         /* Exception config */
         std::string _info = "[None]";
@@ -55,7 +55,7 @@ class AException: virtual public utils::exception::IException {
         AException& operator=(AException&& object) = delete;
 
         // ---------- Constructor --------- //
-        AException(std::source_location loc = std::source_location::current(), std::size_t type = utils::exception::Type::None, utils::exception::Code code = utils::exception::Code::Undefined, std::string info = "[None]") : IException(), _file{loc.file_name()}, _line{loc.line()}, _func{loc.function_name()}, _info{info}, _type{type}, _code{code} {};
+        AException(std::source_location loc = std::source_location::current(), std::size_t type = utils::exception::Type::None, utils::exception::Code code = utils::exception::Code::Undefined, std::string info = "[None]") : IException(), _file{loc.file_name()}, _func{loc.function_name()}, _line{loc.line()}, _info{info}, _type{type}, _code{code} {};
         AException(const AException& object) = delete;
         AException(AException&& object) = delete;
 

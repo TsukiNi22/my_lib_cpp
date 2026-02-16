@@ -20,7 +20,7 @@ int main()
     std::cout << e->isNone() << std::endl;
     std::cout << e->isFatal() << std::endl;
     std::cout << e->what() << std::endl;
-    std::cout << COLOR(utils::write::Color::Red) << e->info() << std::endl;
+    std::cout << e->info() << std::endl;
     std::cout << e->formated() << std::endl;
     delete e;
     return OK;
