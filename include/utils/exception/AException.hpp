@@ -17,7 +17,7 @@ File Description:
 
     /* type/class */
     #include "IException.hpp"       // utils::exception::IException
-    #include "ExceptionDefine.hpp"  // utils::exception::Code, utils::exception::type, utils::exception::Message
+    #include "ExceptionDefine.hpp"  // utils::exception::Code, utils::exception::Type, utils::exception::Message
     #include <source_location>      // std::source_location
     #include <cstdint>              // std::size_t
     #include <limits>               // std::numeric_limits

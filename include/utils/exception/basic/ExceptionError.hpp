@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 13/02/2026 by @author Tsukini
+##  @date 16/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionError.hpp
@@ -17,8 +17,9 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "../AException.hpp"    // utils::exception::AException
-    #include <source_location>      // std::source_location
+    #include "../ExceptionDefine.hpp"   // utils::exception::Code, utils::exception::Type
+    #include "../AException.hpp"        // utils::exception::AException
+    #include <source_location>          // std::source_location
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
