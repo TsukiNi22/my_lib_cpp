@@ -16,7 +16,7 @@ File Description:
 
 int main()
 {
-    utils::exception::IException* e = new utils::exception::ExceptionError();
+    utils::exception::IException* e = new utils::exception::ErrorException();
     std::cout << e->isNone() << std::endl;
     std::cout << e->isFatal() << std::endl;
     std::cout << e->what() << std::endl;

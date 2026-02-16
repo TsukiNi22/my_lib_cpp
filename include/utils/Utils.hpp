@@ -34,10 +34,10 @@ File Description:
         // -> Customized exception used for the error/warning handling
         #include "utils/exception/IException.hpp"               // utils::exception::IException
         #include "utils/exception/ExceptionDefine.hpp"          // OK/KO, utils::exception::Code, utils::exception::Type
-        #include "utils/exception/basic/ExceptionNone.hpp"      // utils::exception::None
-        #include "utils/exception/basic/ExceptionError.hpp"     // utils::exception::Error
-        #include "utils/exception/basic/ExceptionWarning.hpp"   // utils::exception::Warning
-        #include "utils/exception/custom/ExceptionCustom.hpp"   // utils::exception::Custom
+        #include "utils/exception/basic/NoneException.hpp"      // utils::exception::NoneException
+        #include "utils/exception/basic/ErrorException.hpp"     // utils::exception::ErrorException
+        #include "utils/exception/basic/WarningException.hpp"   // utils::exception::WarningException
+        #include "utils/exception/custom/CustomException.hpp"   // utils::exception::CustomException
     #endif
 
     /* Write */
@@ -46,8 +46,8 @@ File Description:
         // -> Define some special char & other
         #include "utils/write/Color.hpp"    // utils::write::Color, utils::write::BackColor
         #include "utils/write/Char.hpp"     // utils::write::Char
-        #include "utils/write/Define.hpp"   // utils::write::
-        #include "utils/write/Macro.hpp"    // utils::write::
+        #include "utils/write/Define.hpp"   // different define for ouput edition
+        #include "utils/write/Macro.hpp"    // different macro for ouput edition
     #endif
 
 #endif /* UTILS_H */
