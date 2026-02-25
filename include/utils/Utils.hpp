@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 16/02/2026 by @author Tsukini
+##  @date 25/02/2026 by @author Tsukini
 
 File Name:
 ##  @file Utils.hpp
@@ -18,6 +18,7 @@ File Description:
     /* Activate all include */
     #ifdef _All
         #define _Handling
+        #define _Attribute
     #endif
 
     /* Activate all handling include */
@@ -49,5 +50,13 @@ File Description:
         #include "utils/write/Define.hpp"   // different define for ouput edition
         #include "utils/write/Macro.hpp"    // different macro for ouput edition
     #endif
+
+    /* Macro */
+    #ifdef _Attribute
+        // -> Macro/Define of attribute & keyword for optimisation & other
+        #include "utils/attribute/Define.hpp"   // different define for optimisation & other
+        #include "utils/attribute/Macro.hpp"    // different macro for optimisation & other
+    #endif
+
 
 #endif /* UTILS_H */
