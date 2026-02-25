@@ -19,6 +19,7 @@ File Description:
     /* attribute */
     #define unused          __attribute__((unused))                 // Signal an unused variable
     #define unused_return   __attribute__((warn_unused_result))     // Warn for unused return
+    #define nonnull_return  __attribute__((returns_nonnull))        // Warn for return with null
     #define hidden          __attribute__((visibility("hidden")))   // Change the visibility on a shared lib
     #define ctor            __attribute__((constructor))            // Execute before the main
     #define dtor            __attribute__((destructor))             // Execute after the main
