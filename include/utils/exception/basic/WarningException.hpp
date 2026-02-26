@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 16/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
 ##  @file WarningException.hpp
@@ -17,9 +17,10 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "../ExceptionDefine.hpp"   // utils::exception::Code, utils::exception::Type
-    #include "../AException.hpp"        // utils::exception::AException
-    #include <source_location>          // std::source_location
+    #include "../ExceptionDefine.hpp"           // utils::exception::Code, utils::exception::Type
+    #include "../AException.hpp"                // utils::exception::AException
+    #include "../../attribute/Attribute.hpp"    // cold
+    #include <source_location>                  // std::source_location
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
@@ -32,7 +33,7 @@ class WarningException: virtual public utils::exception::AException {
         WarningException& operator=(WarningException&& object) = delete;
 
         // ---------- Constructor --------- //
-        WarningException(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Warning, code) {};
+        cold WarningException(utils::exception::Code code = utils::exception::Code::Undefined, std::source_location loc = std::source_location::current()) : AException(loc, utils::exception::Type::Warning, code) {};
         WarningException(const WarningException& object) = delete;
         WarningException(WarningException&& object) = delete;
 

@@ -1,17 +1,17 @@
 /**************************************************************\
 Edition:
-##  @date 16/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
-##  @file Macro.hpp
+##  @file WriteMacro.hpp
 
 File Description:
 ##  You know, I don t think there are good or bad descriptions,
 ##  for me, life is all about functions...
 \**************************************************************/
 
-#ifndef MACRO_H
-    #define MACRO_H
+#ifndef WRITEMACRO_H
+    #define WRITEMACRO_H
 
     //----------------------------------------------------------------//
     /* INCLUDE */
@@ -23,7 +23,7 @@ File Description:
     #include <format>       // std::format
 
     //----------------------------------------------------------------//
-    /* MACRO */
+    /* WRITEMACRO */
 
     /* color */
     #define color(c)                std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(c))
@@ -40,4 +40,4 @@ File Description:
     #define column(x)           std::format("{}[{}G", static_cast<char>(utils::write::Char::ESC), static_cast<int32_t>(x))
     #define pos(x, y)           std::format("{}[{};{}H", static_cast<char>(utils::write::Char::ESC), static_cast<int32_t>(x), static_cast<int32_t>(y))
 
-#endif /* MACRO_H */
+#endif /* WRITEMACRO_H */

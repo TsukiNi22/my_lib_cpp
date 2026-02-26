@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 25/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
 ##  @file Utils.hpp
@@ -45,18 +45,16 @@ File Description:
     #ifdef _Write
         // -> Handling of the edit for the ouput/input display
         // -> Define some special char & other
-        #include "utils/write/Color.hpp"    // utils::write::Color, utils::write::BackColor
-        #include "utils/write/Char.hpp"     // utils::write::Char
-        #include "utils/write/Define.hpp"   // different define for ouput edition
-        #include "utils/write/Macro.hpp"    // different macro for ouput edition
+        #include "utils/write/Color.hpp"        // utils::write::Color, utils::write::BackColor
+        #include "utils/write/Char.hpp"         // utils::write::Char
+        #include "utils/write/WriteDefine.hpp"  // different define for ouput edition
+        #include "utils/write/WriteMacro.hpp"   // different macro for ouput edition
     #endif
 
     /* Macro */
     #ifdef _Attribute
-        // -> Macro/Define of attribute & keyword for optimisation & other
-        #include "utils/attribute/Define.hpp"   // different define for optimisation & other
-        #include "utils/attribute/Macro.hpp"    // different macro for optimisation & other
+        // -> Define/Macro of attribute & keyword for optimisation & other
+        #include "utils/attribute/Attribute.hpp"  // different define/macro for optimisation & other
     #endif
-
 
 #endif /* UTILS_H */

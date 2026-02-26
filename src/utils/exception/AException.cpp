@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 16/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.cpp
@@ -13,13 +13,14 @@ File Description:
 #include "utils/exception/ExceptionDefine.hpp"  // utils::exception::Message, utils::exception::Type
 #include "utils/exception/AException.hpp"       // utils::exception::AException
 #include "utils/write/Color.hpp"                // utils::write::Color
-#include "utils/write/Define.hpp"               // reset, strong
-#include "utils/write/Macro.hpp"                // color_rbg
+#include "utils/write/WriteDefine.hpp"          // reset, strong
+#include "utils/write/WriteMacro.hpp"           // color_rbg
+#include "utils/attribute/Attribute.hpp"        // nodiscard
 #include <sstream>                              // std::ostringstream
 #include <string>                               // std::string
 
-std::string utils::exception::AException::formated()
-const noexcept {
+nodiscard std::string utils::exception::AException::formated() const noexcept
+{
     std::ostringstream oss;
 
     // Exception type

@@ -1,17 +1,17 @@
 /**************************************************************\
 Edition:
-##  @date 16/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
-##  @file Define.hpp
+##  @file WriteDefine.hpp
 
 File Description:
 ##  You know, I don t think there are good or bad descriptions,
 ##  for me, life is all about functions...
 \**************************************************************/
 
-#ifndef DEFINE_H
-    #define DEFINE_H
+#ifndef WRITEDEFINE_H
+    #define WRITEDEFINE_H
 
     //----------------------------------------------------------------//
     /* INCLUDE */
@@ -22,7 +22,7 @@ File Description:
     #include <format>       // std::format
 
     //----------------------------------------------------------------//
-    /* DEFINE */
+    /* WRITEDEFINE */
 
     /* reset */
     #define reset   std::format("{}[0m", static_cast<char>(utils::write::Char::ESC))
@@ -52,4 +52,4 @@ File Description:
     #define line_start      std::format("{}[1K", static_cast<char>(utils::write::Char::ESC))
     #define line            std::format("{}[2K", static_cast<char>(utils::write::Char::ESC))
 
-#endif /* DEFINE_H */
+#endif /* WRITEDEFINE_H */

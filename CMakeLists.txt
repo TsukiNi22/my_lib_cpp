@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) # Moderne compilation -fPIE
+add_definitions(-DFORCED_CXX_STANDARD=14) # Used for the attribute definition
 
 # =========================
 # Warnings
@@ -53,10 +54,5 @@ target_compile_options(${TARGET} PRIVATE
 # =========================
 add_custom_target(get_unregistered_files
     COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/check_files.sh unregistered ${SRC}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-)
-
-add_custom_target(get_unknow_files
-    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/check_files.sh unknow ${SRC}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
