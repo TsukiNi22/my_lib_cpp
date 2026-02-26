@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 25/02/2026 by @author Tsukini
+##  @date 26/02/2026 by @author Tsukini
 
 File Name:
 ##  @file Define.hpp
@@ -17,20 +17,19 @@ File Description:
     /* DEFINE */
 
     /* attribute */
-    #define unused          __attribute__((unused))                 // Signal an unused variable
-    #define unused_return   __attribute__((warn_unused_result))     // Warn for unused return
-    #define nonnull_return  __attribute__((returns_nonnull))        // Warn for return with null
-    #define hidden          __attribute__((visibility("hidden")))   // Change the visibility on a shared lib
-    #define ctor            __attribute__((constructor))            // Execute before the main
-    #define dtor            __attribute__((destructor))             // Execute after the main
+    #define unused          [[maybe_unused]]                // Signal an unused variable
+    #define nodiscard       [[nodiscard]]                   // Warn for unused return
+    #define hidden          [[gnu::visibility("hidden")]]   // Change the visibility on a shared lib
+    #define ctor            [[gnu::constructor]]            // Execute before the main
+    #define dtor            [[gnu::destructor]]             // Execute after the main
 
     /* optimisation */
-    #define cold        __attribute__((cold))       // Signal a function that has a small number of use
-    #define hot         __attribute__((hot))        // Signal a function that has a huge number of use
-    #define likely      [[likely]]                  // Signal a condition that has a bigger probability of appening
-    #define unlikely    [[unlikely]]                // Signal a condition that has a smallest probability of appening
+    #define cold        [[gnu::cold]]   // Signal a function that has a small number of use
+    #define hot         [[gnu::hot]]    // Signal a function that has a huge number of use
+    #define likely      [[likely]]      // Signal a condition that has a bigger probability of appening
+    #define unlikely    [[unlikely]]    // Signal a condition that has a smallest probability of appening
 
     /* binary */
-    #define remove_padding  __attribute__((packed))     // Remove the memory padding in a struct
+    #define remove_padding  [[gnu::packed]] // Remove the memory padding in a struct
 
 #endif /* DEFINE_H */
