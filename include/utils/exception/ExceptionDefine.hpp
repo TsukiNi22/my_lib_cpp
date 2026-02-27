@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 26/02/2026 by @author Tsukini
+##  @date 27/02/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionDefine.hpp
@@ -12,6 +12,13 @@ File Description:
 
 #ifndef EXCEPTIONDEFINE_H
     #define EXCEPTIONDEFINE_H
+
+    //----------------------------------------------------------------//
+    /* INCLUDE */
+
+    /* type */
+    #include <iterator> // std::size
+    #include <cstddef>  // std::size_t
 
     //----------------------------------------------------------------//
     /* DEFINE */
@@ -39,12 +46,16 @@ enum Type {
 /* Definition of the different exception code */
 enum Code {
     Undefined = 0,
+    CODE_SENTINEL // sentinel used for verification
 };
 
 /* Corresponding exception message for each code */
 inline constexpr const char *Message[] = {
     /* Undefined */ "An undefined error has occured",
 };
+
+// Check at the compile time the correspondece between the message & code
+static_assert(std::size(Message) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The message array doesn't correspond to the available exception codes");
 
 } // namespace end
 #endif /* EXCEPTIONDEFINE_H */
