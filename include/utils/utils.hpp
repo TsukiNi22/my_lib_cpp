@@ -45,10 +45,9 @@ File Description:
     #ifdef _Write
         // -> Handling of the edit for the ouput/input display
         // -> Define some special char & other
-        #include "utils/write/Color.hpp"        // utils::write::Color, utils::write::BackColor
-        #include "utils/write/Char.hpp"         // utils::write::Char
-        #include "utils/write/WriteDefine.hpp"  // different define for ouput edition
-        #include "utils/write/WriteMacro.hpp"   // different macro for ouput edition
+        #include "utils/write/Color.hpp"            // utils::write::Color, utils::write::BackColor
+        #include "utils/write/Char.hpp"             // utils::write::Char
+        #include "utils/write/OutputEdition.hpp"    // different inline function for output edtion
     #endif
 
     /* Macro */
