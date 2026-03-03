@@ -12,7 +12,7 @@ File Description:
 #include "utils/exception/ExceptionDefine.hpp"  // utils::exception::Message, utils::exception::Type
 #include "utils/exception/AException.hpp"       // utils::exception::AException
 #include "utils/write/Color.hpp"                // utils::write::Color
-#include "utils/write/OutputEdition.hpp"        // utils::write::reset, utils::write::strong, utils::write::color_rbg
+#include "utils/write/ANSI.hpp"                 // utils::write::reset, utils::write::strong, utils::write::color_rbg
 #include "utils/attribute/Attribute.hpp"        // nodiscard
 #include <sstream>                              // std::ostringstream
 #include <string>                               // std::string
