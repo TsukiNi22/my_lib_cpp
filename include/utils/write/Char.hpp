@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 02/03/2026 by @author Tsukini
+##  @date 03/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Char.hpp

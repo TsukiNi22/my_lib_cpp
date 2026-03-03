@@ -99,5 +99,36 @@ namespace utils::write { // namespace start
     inline std::string report_past_enable()             {return std::format("{}[?2004h", static_cast<char>(utils::write::Char::ESC));} // Reports for pasted data: "ESC[200~{data}ESC[201~"
     inline std::string report_past_disable()            {return std::format("{}[?2004l", static_cast<char>(utils::write::Char::ESC));}
 
+//----------------------------------------------------------------//
+/* TYPDEF */
+
+/* mousse button */
+enum class MouseButton {
+    Left,
+    Right,
+    Middle,
+    Release,
+    Unknown
+};
+
+/* mouse event -> "ESC[Mb;x;y" */
+struct MouseEvent {
+    utils::write::MouseButton button = utils::write::MouseButton::Unknown;
+    std::size_t x = 0;
+    std::size_t y = 0;
+};
+
+/* mouse event -> "ESC[<b;x;y(M|m)" */
+struct AdvancedMouseEvent {
+    utils::write::MouseButton button = utils::write::MouseButton::Unknown;
+    std::size_t x = 0;
+    std::size_t y = 0;
+    bool pressed = false;
+};
+
+// Input -> Mouse Event
+utils::write::MouseEvent readMouseEvent();
+utils::write::AdvancedMouseEvent readAdvancedMouseEvent();
+
 } // namespace ends
 #endif /* ANSI_H */

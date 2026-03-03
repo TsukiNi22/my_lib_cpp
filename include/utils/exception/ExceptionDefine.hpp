@@ -45,12 +45,14 @@ enum Type {
 /* Definition of the different exception code */
 enum Code {
     Undefined = 0,
+    MouseEvent, // Used in ANSI utils::write::readMouseEvent
     CODE_SENTINEL // sentinel used for verification
 };
 
 /* Corresponding exception message for each code */
 inline constexpr const char *Message[] = {
     /* Undefined */ "An undefined error has occured",
+    /* MouseEvent */ "Error during the read of the mouse event",
 };
 
 // Check at the compile time the correspondece between the message & code
