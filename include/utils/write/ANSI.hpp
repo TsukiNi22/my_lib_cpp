@@ -28,15 +28,46 @@ namespace utils::write { // namespace start
     //----------------------------------------------------------------//
     /* ANSI */
 
-    /* ----------- reset ----------- */
-    inline std::string reset()                                      {return std::format("{}[0m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string resetStyle(utils::write::ResetStyle style)   {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
+    /* --------- function ---------- */
+    std::string setStyle(std::initializer_list<utils::write::Style> styles);
     std::string resetStyle(std::initializer_list<utils::write::ResetStyle> styles);
 
-    /* ----------- style ----------- */
-    inline std::string setStyle(utils::write::Style style)          {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
-    std::string setStyle(std::initializer_list<utils::write::Style> styles);
+    /* ----------- reset ----------- */
+    inline std::string reset()                  {return std::format("{}[0m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string strong_reset()           {return std::format("{}[21m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string dark_reset()             {return std::format("{}[22m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string italic_reset()           {return std::format("{}[23m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string underlined_reset()       {return std::format("{}[24m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string flashing_fast_reset()    {return std::format("{}[25m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string flashing_slow_reset()    {return std::format("{}[26m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string reversed_reset()         {return std::format("{}[27m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string hide_reset()             {return std::format("{}[28m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string bar_reset()              {return std::format("{}[29m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string framed_encircled_reset() {return std::format("{}[54m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string overlined_reset()        {return std::format("{}[55m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string underline_color_reset()  {return std::format("{}[59m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string exposant_indice_reset()  {return std::format("{}[75m", static_cast<char>(utils::write::Char::ESC));}
     /* args */
+    inline std::string resetStyle(utils::write::ResetStyle style)   {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
+
+    /* ----------- style ----------- */
+    inline std::string strong()         {return std::format("{}[1m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string dark()           {return std::format("{}[2m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string italic()         {return std::format("{}[3m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string underlined()     {return std::format("{}[4m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string flashing_fast()  {return std::format("{}[5m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string flashing_slow()  {return std::format("{}[6m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string reversed()       {return std::format("{}[7m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string hide()           {return std::format("{}[8m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string bar()            {return std::format("{}[9m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string monospace()      {return std::format("{}[50m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string framed()         {return std::format("{}[51m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
+    inline std::string encircled()      {return std::format("{}[52m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
+    inline std::string overlined()      {return std::format("{}[53m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string exposant()       {return std::format("{}[73m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
+    inline std::string indice()         {return std::format("{}[74m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
+    /* args */
+    inline std::string setStyle(utils::write::Style style)                                  {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
     inline std::string color(utils::write::Color c)                                         {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(c));}
     inline std::string color(utils::write::BackColor c)                                     {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(c));}
     inline std::string color_id(std::uint8_t id)                                            {return std::format("{}[38;5;{}m", static_cast<char>(utils::write::Char::ESC), id);}
@@ -50,16 +81,16 @@ namespace utils::write { // namespace start
     inline std::string load_cur()   {return std::format("{}[u", static_cast<char>(utils::write::Char::ESC));}
     inline std::string save_cur()   {return std::format("{}[s", static_cast<char>(utils::write::Char::ESC));}
     /* args */
-    inline std::string up(std::size_t n)                {return std::format("{}[{}A", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string down(std::size_t n)              {return std::format("{}[{}B", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string right(std::size_t n)             {return std::format("{}[{}C", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string left(std::size_t n)              {return std::format("{}[{}D", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string next_line(std::size_t n)         {return std::format("{}[{}E", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string previous_line(std::size_t n)     {return std::format("{}[{}F", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string column(std::size_t x)            {return std::format("{}[{}G", static_cast<char>(utils::write::Char::ESC), x);}
+    inline std::string up(std::size_t n)                    {return std::format("{}[{}A", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string down(std::size_t n)                  {return std::format("{}[{}B", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string right(std::size_t n)                 {return std::format("{}[{}C", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string left(std::size_t n)                  {return std::format("{}[{}D", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string next_line(std::size_t n)             {return std::format("{}[{}E", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string previous_line(std::size_t n)         {return std::format("{}[{}F", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string column(std::size_t x)                {return std::format("{}[{}G", static_cast<char>(utils::write::Char::ESC), x);}
     inline std::string pos(std::size_t x, std::size_t y)    {return std::format("{}[{};{}H", static_cast<char>(utils::write::Char::ESC), x, y);}
-    inline std::string scroll_up(std::size_t n)         {return std::format("{}[{}S", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string scroll_down(std::size_t n)       {return std::format("{}[{}T", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string scroll_up(std::size_t n)             {return std::format("{}[{}S", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string scroll_down(std::size_t n)           {return std::format("{}[{}T", static_cast<char>(utils::write::Char::ESC), n);}
 
     /* ----------- erase ----------- */
     inline std::string screen_end()         {return std::format("{}[0J", static_cast<char>(utils::write::Char::ESC));}

@@ -23,7 +23,7 @@ nodiscard std::string utils::exception::AException::formated() const noexcept
     std::ostringstream oss;
 
     // Exception type
-    oss << utils::write::setStyle(utils::write::Style::Strong);
+    oss << utils::write::strong();
     if (this->_type & utils::exception::Type::None)
         oss << utils::write::color_rgb(175, 100, 0) << "[None]";
     else if (this->_type & utils::exception::Type::Error)
@@ -33,7 +33,7 @@ nodiscard std::string utils::exception::AException::formated() const noexcept
     oss << " " << utils::write::reset();
 
     // Emplacement information
-    oss << utils::write::setStyle(utils::write::Style::Strong) << this->_file << ":" << this->_line << utils::write::reset() << " -> " << utils::exception::Message[this->_code] << std::endl;
+    oss << utils::write::strong() << this->_file << ":" << this->_line << utils::write::reset() << " -> " << utils::exception::Message[this->_code] << std::endl;
 
     // Content
     oss << utils::write::color_rgb(175, 100, 0) << "-------------------------------------------" << utils::write::reset() << std::endl;
