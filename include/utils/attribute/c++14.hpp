@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 04/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-c++14.hpp
@@ -17,13 +17,13 @@ File Description:
     /* DEFINE */
 
     /* attributes */
-    #define nodiscard           __attribute__((warn_unused_result))     // Warn for unused return
-    #define unused              __attribute__((unused))                 // Signal an unused variable
-    #define hidden              __attribute__((visibility("hidden")))   // Change the visibility on a shared lib
-    #define ctor                __attribute__((constructor))            // Execute before the main
-    #define dtor                __attribute__((destructor))             // Execute after the main
-    #define deprecated(info)    [[deprecated(info)]]                    // Signal a deprecated function
-    #define fallthrough         __attribute__((fallthrough))            // Ingore warn for no break in switch
+    #define nodiscard       __attribute__((warn_unused_result))     // Warn for unused return
+    #define unused          __attribute__((unused))                 // Signal an unused variable
+    #define hidden          __attribute__((visibility("hidden")))   // Change the visibility on a shared lib
+    #define ctor            __attribute__((constructor))            // Execute before the main
+    #define dtor            __attribute__((destructor))             // Execute after the main
+    #define outdated(info)  [[deprecated(info)]]                    // Signal a deprecated function
+    #define fallthrough     __attribute__((fallthrough))            // Ingore warn for no break in switch
 
     /* branch prediction */
     #define likely          // Not defined in this version

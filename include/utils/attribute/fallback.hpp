@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 04/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-fallback.hpp
@@ -22,7 +22,7 @@ File Description:
     #define hidden
     #define ctor
     #define dtor
-    #define deprecated(info)
+    #define outdated(info)
     #define fallthrough
 
     /* branch prediction */

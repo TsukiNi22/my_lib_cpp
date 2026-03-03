@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 04/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-c++17.hpp
@@ -17,13 +17,13 @@ File Description:
     /* DEFINE */
 
     /* attributes */
-    #define nodiscard           [[nodiscard]]                   // Warn for unused return
-    #define unused              [[maybe_unused]]                // Signal an unused variable
-    #define hidden              [[gnu::visibility("hidden")]]   // Change the visibility on a shared lib
-    #define ctor                [[gnu::constructor]]            // Execute before the main
-    #define dtor                [[gnu::destructor]]             // Execute after the main
-    #define deprecated(info)    [[deprecated(info)]]            // Signal a deprecated function
-    #define fallthrough         [[fallthrough]]                 // Ingore warn for no break in switch
+    #define nodiscard       [[nodiscard]]                   // Warn for unused return
+    #define unused          [[maybe_unused]]                // Signal an unused variable
+    #define hidden          [[gnu::visibility("hidden")]]   // Change the visibility on a shared lib
+    #define ctor            [[gnu::constructor]]            // Execute before the main
+    #define dtor            [[gnu::destructor]]             // Execute after the main
+    #define outdated(info)  [[deprecated(info)]]            // Signal a deprecated function
+    #define fallthrough     [[fallthrough]]                 // Ingore warn for no break in switch
 
     /* branch prediction */
     #define likely          // Not defined in this version
