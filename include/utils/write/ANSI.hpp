@@ -20,7 +20,7 @@ File Description:
     #include "Char.hpp"         // utils::write::Char
     #include "Style.hpp"        // utils::write::Style, utils::write::ResetStyle
     #include <initializer_list> // std::initializer_list
-    #include <cstdint>          // std::uint8_t
+    #include <cstdint>          // std::uint8_t, std::size_t
     #include <format>           // std::format
     #include <string>           // std::string
 
@@ -50,16 +50,16 @@ namespace utils::write { // namespace start
     inline std::string load_cur()   {return std::format("{}[u", static_cast<char>(utils::write::Char::ESC));}
     inline std::string save_cur()   {return std::format("{}[s", static_cast<char>(utils::write::Char::ESC));}
     /* args */
-    inline std::string up(int32_t n)                {return std::format("{}[{}A", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string down(int32_t n)              {return std::format("{}[{}B", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string right(int32_t n)             {return std::format("{}[{}C", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string left(int32_t n)              {return std::format("{}[{}D", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string next_line(int32_t n)         {return std::format("{}[{}E", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string previous_line(int32_t n)     {return std::format("{}[{}F", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string column(int32_t x)            {return std::format("{}[{}G", static_cast<char>(utils::write::Char::ESC), x);}
-    inline std::string pos(int32_t x, int32_t y)    {return std::format("{}[{};{}H", static_cast<char>(utils::write::Char::ESC), x, y);}
-    inline std::string scroll_up(int32_t n)         {return std::format("{}[{}S", static_cast<char>(utils::write::Char::ESC), n);}
-    inline std::string scroll_down(int32_t n)       {return std::format("{}[{}T", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string up(std::size_t n)                {return std::format("{}[{}A", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string down(std::size_t n)              {return std::format("{}[{}B", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string right(std::size_t n)             {return std::format("{}[{}C", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string left(std::size_t n)              {return std::format("{}[{}D", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string next_line(std::size_t n)         {return std::format("{}[{}E", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string previous_line(std::size_t n)     {return std::format("{}[{}F", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string column(std::size_t x)            {return std::format("{}[{}G", static_cast<char>(utils::write::Char::ESC), x);}
+    inline std::string pos(std::size_t x, std::size_t y)    {return std::format("{}[{};{}H", static_cast<char>(utils::write::Char::ESC), x, y);}
+    inline std::string scroll_up(std::size_t n)         {return std::format("{}[{}S", static_cast<char>(utils::write::Char::ESC), n);}
+    inline std::string scroll_down(std::size_t n)       {return std::format("{}[{}T", static_cast<char>(utils::write::Char::ESC), n);}
 
     /* ----------- erase ----------- */
     inline std::string screen_end()         {return std::format("{}[0J", static_cast<char>(utils::write::Char::ESC));}
