@@ -1,13 +1,12 @@
 /**************************************************************\
 Edition:
-##  @date 28/02/2026 by @author Tsukini
+##  @date 03/03/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.cpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Definition of the function used in the abstract for exception
 \**************************************************************/
 
 #include "utils/exception/ExceptionDefine.hpp"  // utils::exception::Message, utils::exception::Type
