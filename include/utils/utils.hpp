@@ -1,12 +1,12 @@
 /**************************************************************\
 Edition:
-##  @date 01/03/2026 by @author Tsukini
+##  @date 03/03/2026 by @author Tsukini
 
 File Name:
 ##  @file utils.hpp
 
 File Description:
-##  
+##  Main include for every part of the utils lib
 \**************************************************************/
 
 //----------------------------------------------------------------//
@@ -40,11 +40,11 @@ File Description:
 
 /* Write */
 #ifdef _Write
-    // -> Handling of the edit for the ouput/input display
+    // -> Handling of the ANSI escape sequences
     // -> Define some special char & other
-    #include "utils/write/Color.hpp"            // utils::write::Color, utils::write::BackColor
-    #include "utils/write/Char.hpp"             // utils::write::Char
-    #include "utils/write/OutputEdition.hpp"    // different inline function for output edtion
+    #include "utils/write/Color.hpp"    // utils::write::Color, utils::write::BackColor
+    #include "utils/write/Char.hpp"     // utils::write::Char
+    #include "utils/write/ANSI.hpp"     // different inline function for ANSI escape sequences
 #endif
 
 /* Macro */

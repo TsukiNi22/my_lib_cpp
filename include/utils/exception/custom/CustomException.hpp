@@ -1,13 +1,12 @@
 /**************************************************************\
 Edition:
-##  @date 26/02/2026 by @author Tsukini
+##  @date 03/03/2026 by @author Tsukini
 
 File Name:
 ##  @file CustomException.hpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Exception class used for custom ones
 \**************************************************************/
 
 #ifndef CUSTOMEXCEPTION_H

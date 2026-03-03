@@ -1,13 +1,13 @@
 /**************************************************************\
 Edition:
-##  @date 26/02/2026 by @author Tsukini
+##  @date 02/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-fallback.hpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Different attribute used for optimisation & other thing
+##  Fallback if the version used is inferior to c++14
 \**************************************************************/
 
 #ifndef ATTRIBUTE_FALLBACK_H

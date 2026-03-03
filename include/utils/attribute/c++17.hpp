@@ -1,13 +1,13 @@
 /**************************************************************\
 Edition:
-##  @date 26/02/2026 by @author Tsukini
+##  @date 02/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-c++17.hpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Different attribute used for optimisation & other thing
+##  Version for c++17 and above
 \**************************************************************/
 
 #ifndef ATTRIBUTE_CPP17_H

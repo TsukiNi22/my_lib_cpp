@@ -1,13 +1,12 @@
 /**************************************************************\
 Edition:
-##  @date 28/02/2026 by @author Tsukini
+##  @date 03/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Color.hpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Definition of color used in ANSI escape sequences
 \**************************************************************/
 
 #ifndef COLOR_H
@@ -32,7 +31,16 @@ enum class Color: std::uint8_t {
     Blue,
     Magenta,
     Cyan,
-    White
+    White,
+    BrightBlack = 90,
+    BrightRed,
+    BrightGreen,
+    BrightYellow,
+    BrightBlue,
+    BrightMagenta,
+    BrightCyan,
+    BrightWhite,
+    Default = 39,
 };
 
 /* back color */
@@ -44,7 +52,16 @@ enum class BackColor: std::uint8_t {
     Blue,
     Magenta,
     Cyan,
-    White
+    White,
+    BrightBlack = 100,
+    BrightRed,
+    BrightGreen,
+    BrightYellow,
+    BrightBlue,
+    BrightMagenta,
+    BrightCyan,
+    BrightWhite,
+    Default = 49,
 };
 
 } // namespace end

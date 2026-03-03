@@ -1,13 +1,12 @@
 /**************************************************************\
 Edition:
-##  @date 28/02/2026 by @author Tsukini
+##  @date 02/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Char.hpp
 
 File Description:
-##  You know, I don t think there are good or bad descriptions,
-##  for me, life is all about functions...
+##  Definition of some special char
 \**************************************************************/
 
 #ifndef CHAR_H
@@ -24,6 +23,7 @@ enum class Char: char {
         EOF = -1,
     #endif
     ESC = 27,
+    DEL = 127,
 };
 
 } // namespace end
