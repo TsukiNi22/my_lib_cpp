@@ -31,6 +31,9 @@ add_compile_options(
 set(SRC
     ## Exception
     src/utils/exception/AException.cpp
+
+    ## Write
+    src/utils/write/ANSI.cpp
 )
 add_library(${TARGET} STATIC ${SRC})
 #add_library(${TARGET} SHARED ${SRC})
@@ -53,6 +56,6 @@ target_compile_options(${TARGET} PRIVATE
 # Utils
 # =========================
 add_custom_target(get_unregistered_files
-    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/check_files.sh unregistered ${SRC}
+    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/script/check_files.sh unregistered ${SRC}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )

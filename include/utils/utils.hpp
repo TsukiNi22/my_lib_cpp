@@ -44,6 +44,7 @@ File Description:
     // -> Define some special char & other
     #include "utils/write/Color.hpp"    // utils::write::Color, utils::write::BackColor
     #include "utils/write/Char.hpp"     // utils::write::Char
+    #include "utils/write/Style.hpp"    // utils::write::Style, utils::write::ResetStyle
     #include "utils/write/ANSI.hpp"     // different inline function for ANSI escape sequences
 #endif
 

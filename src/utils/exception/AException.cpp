@@ -9,20 +9,21 @@ File Description:
 ##  Definition of the function used in the abstract for exception
 \**************************************************************/
 
-#include "utils/exception/ExceptionDefine.hpp"  // utils::exception::Message, utils::exception::Type
-#include "utils/exception/AException.hpp"       // utils::exception::AException
-#include "utils/write/Color.hpp"                // utils::write::Color
-#include "utils/write/ANSI.hpp"                 // utils::write::reset, utils::write::strong, utils::write::color_rbg
-#include "utils/attribute/Attribute.hpp"        // nodiscard
-#include <sstream>                              // std::ostringstream
-#include <string>                               // std::string
+#include "utils/exception/ExceptionDefine.hpp"
+#include "utils/exception/AException.hpp"
+#include "utils/write/Color.hpp"
+#include "utils/write/ANSI.hpp"
+#include "utils/write/Style.hpp"
+#include "utils/attribute/Attribute.hpp"
+#include <sstream>
+#include <string>
 
 nodiscard std::string utils::exception::AException::formated() const noexcept
 {
     std::ostringstream oss;
 
     // Exception type
-    oss << utils::write::strong();
+    oss << utils::write::setStyle(utils::write::Style::Strong);
     if (this->_type & utils::exception::Type::None)
         oss << utils::write::color_rgb(175, 100, 0) << "[None]";
     else if (this->_type & utils::exception::Type::Error)
@@ -32,7 +33,7 @@ nodiscard std::string utils::exception::AException::formated() const noexcept
     oss << " " << utils::write::reset();
 
     // Emplacement information
-    oss << utils::write::strong() << this->_file << ":" << this->_line << utils::write::reset() << " -> " << utils::exception::Message[this->_code] << std::endl;
+    oss << utils::write::setStyle(utils::write::Style::Strong) << this->_file << ":" << this->_line << utils::write::reset() << " -> " << utils::exception::Message[this->_code] << std::endl;
 
     // Content
     oss << utils::write::color_rgb(175, 100, 0) << "-------------------------------------------" << utils::write::reset() << std::endl;

@@ -16,49 +16,26 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "Color.hpp"    // utils::write::Color, utils::write::BackColor
-    #include "Char.hpp"     // utils::write::Char
-    #include <cstdint>      // std::uint8_t
-    #include <format>       // std::format
-    #include <string>       // std::string
+    #include "Color.hpp"        // utils::write::Color, utils::write::BackColor
+    #include "Char.hpp"         // utils::write::Char
+    #include "Style.hpp"        // utils::write::Style, utils::write::ResetStyle
+    #include <initializer_list> // std::initializer_list
+    #include <cstdint>          // std::uint8_t
+    #include <format>           // std::format
+    #include <string>           // std::string
 
 namespace utils::write { // namespace start
     //----------------------------------------------------------------//
     /* ANSI */
 
     /* ----------- reset ----------- */
-    inline std::string reset()  {return std::format("{}[0m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string reset()                                      {return std::format("{}[0m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string resetStyle(utils::write::ResetStyle style)   {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
+    std::string resetStyle(std::initializer_list<utils::write::ResetStyle> styles);
 
     /* ----------- style ----------- */
-    inline std::string strong()         {return std::format("{}[1m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string dark()           {return std::format("{}[2m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string italic()         {return std::format("{}[3m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string underlined()     {return std::format("{}[4m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string flashing_fast()  {return std::format("{}[5m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string flashing_slow()  {return std::format("{}[6m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string reversed()       {return std::format("{}[7m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string hide()           {return std::format("{}[8m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string bar()            {return std::format("{}[9m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string monospace()      {return std::format("{}[50m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string framed()         {return std::format("{}[51m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
-    inline std::string encircled()      {return std::format("{}[52m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
-    inline std::string overlined()      {return std::format("{}[53m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string exposant()       {return std::format("{}[73m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
-    inline std::string indice()         {return std::format("{}[74m", static_cast<char>(utils::write::Char::ESC));} // Rarely supported
-    /* reset */
-    inline std::string strong_reset()           {return std::format("{}[21m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string dark_reset()             {return std::format("{}[22m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string italic_reset()           {return std::format("{}[23m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string underlined_reset()       {return std::format("{}[24m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string flashing_fast_reset()    {return std::format("{}[25m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string flashing_slow_reset()    {return std::format("{}[26m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string reversed_reset()         {return std::format("{}[27m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string hide_reset()             {return std::format("{}[28m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string bar_reset()              {return std::format("{}[29m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string framed_encircled_reset() {return std::format("{}[54m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string overlined_reset()        {return std::format("{}[55m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string underline_color_reset()  {return std::format("{}[59m", static_cast<char>(utils::write::Char::ESC));}
-    inline std::string exposant_indice_reset()  {return std::format("{}[75m", static_cast<char>(utils::write::Char::ESC));}
+    inline std::string setStyle(utils::write::Style style)          {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(style));}
+    std::string setStyle(std::initializer_list<utils::write::Style> styles);
     /* args */
     inline std::string color(utils::write::Color c)                                         {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(c));}
     inline std::string color(utils::write::BackColor c)                                     {return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), static_cast<std::uint8_t>(c));}
