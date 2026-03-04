@@ -1,0 +1,8 @@
+{
+    "errors": [
+        {
+            "code": "MouseEvent",
+            "message": "Error during the read of the mouse event"
+        }
+    ]
+}
