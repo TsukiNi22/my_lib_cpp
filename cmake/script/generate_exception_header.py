@@ -111,7 +111,7 @@ enum Code {{
 
 /* Corresponding exception message for each code */
 constexpr inline const char *Message[] = {{
-    "An undefined error has occured",
+    /* Undefined */ "An undefined error has occured",
 {message_str}
 }};
 
@@ -119,7 +119,6 @@ constexpr inline const char *Message[] = {{
 static_assert(std::size(Message) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The message array doesn't correspond to the available exception codes");
 
 }} // namespace end
-
 #endif /* {Path(File.GENERATED_EXCEPTION_HEADER).stem.upper()}_H */
 """
 
