@@ -4,12 +4,12 @@
             "code": "ExceptionCodeRestriction",
             "message": "Error during the setup of an exception",
             "info": "Restriction trigerred on a code & type combination",
-            "type": ["Fatal", "Error"]
+            "restrictions": ["Fatal", "Error"]
         },
         {
             "code": "MouseEvent",
             "message": "Error during the read of the mouse event",
-            "type": ["Fatal", "Error"]
+            "restrictions": ["Fatal", "Error"]
         }
     ]
 }
