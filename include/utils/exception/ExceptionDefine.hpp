@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 05/03/2026 by @author Tsukini
 
 File Name:
 ##  @file ExceptionDefine.hpp
@@ -16,7 +16,8 @@ File Description:
     /* INCLUDE */
 
     /* type */
-    #include "generated_exception_header.hpp"
+    #include "generated_exception_header.hpp"   // utils::exception::Code, utils::exception::Message, utils::exception::Info, utils::exception::Restriction
+    #include <cstdint>                          // std::uint8_t
 
     //----------------------------------------------------------------//
     /* DEFINE */
@@ -34,12 +35,35 @@ namespace utils::exception { // namespace start
 /* TYPEDEF */
 
 /* Definition of the different exception type */
-enum Type {
-    None    = 0b1, // Exception like Exit, does nothing (ignore other type)
-    Fatal   = 0b10,
-    Error   = 0b100,
+enum Type: std::uint8_t {
+    None    = 0b0001, // Exception like Exit, does nothing (ignore other type)
+    Fatal   = 0b0010,
+    Error   = 0b0100,
     Warning = 0b1000,
 };
+
+// ------------ Operator ---------- //
+constexpr inline utils::exception::Type operator|(utils::exception::Type ltype, utils::exception::Type rtype)
+{
+    return static_cast<utils::exception::Type>(static_cast<std::uint8_t>(ltype) | static_cast<std::uint8_t>(rtype));
+}
+
+constexpr inline utils::exception::Type& operator|=(utils::exception::Type& ltype, utils::exception::Type rtype)
+{
+    ltype = ltype | rtype;
+    return ltype;
+}
+
+constexpr inline utils::exception::Type operator&(utils::exception::Type ltype, utils::exception::Type rtype)
+{
+    return static_cast<utils::exception::Type>(static_cast<std::uint8_t>(ltype) & static_cast<std::uint8_t>(rtype));
+}
+
+constexpr inline utils::exception::Type& operator&=(utils::exception::Type& ltype, utils::exception::Type rtype)
+{
+    ltype = ltype & rtype;
+    return ltype;
+}
 
 } // namespace end
 #endif /* EXCEPTIONDEFINE_H */

@@ -18,16 +18,18 @@ File Description:
     //----------------------------------------------------------------//
     /* INCLUDE */
 
-    #include <iterator>
-    #include <cstddef>
+    #include <iterator> // std::size
+    #include <cstddef>  // std::size_t
+    #include <cstdint>  // std::uint8_t
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
 /* TYPEDEF */
 
 /* Definition of the different exception code */
-enum Code {
+enum class Code: std::size_t {
     Undefined = 0,
+    ExceptionCodeRestriction,
     MouseEvent,
     CODE_SENTINEL // sentinel used for verification
 };
@@ -35,11 +37,33 @@ enum Code {
 /* Corresponding exception message for each code */
 constexpr inline const char *Message[] = {
     /* Undefined */ "An undefined error has occured",
-    /* MouseEvent */ "Error during the read of the mouse event"
+    /* ExceptionCodeRestriction */ "Error during the setup of an exception",
+    /* MouseEvent */ "Error during the read of the mouse event",
+};
+
+/* Potential default info: nullptr same as "[None]" */
+constexpr inline const char *Info[] = {
+    /* Undefined */ nullptr,
+    /* ExceptionCodeRestriction */ "Restriction trigerred on a code & type combination",
+    /* MouseEvent */ nullptr,
+};
+
+/* Potential restriction on exception code */
+// 0b0000 = no restriction	(allow all)
+// 0b0001 = None			(allow None)
+// 0b0010 = Fatal			(allow Fatal)
+// 0b0100 = Error			(allow Error)
+// 0b1000 = Warning			(allow Warning)
+constexpr inline const std::uint8_t Restriction[] = {
+    /* Undefined */ 0b0000, // allow: All
+    /* ExceptionCodeRestriction */ 0b0110, // allow: Fatal, Error
+    /* MouseEvent */ 0b0110, // allow: Fatal, Error
 };
 
 // Check at the compile time the correspondece between the message & code
 static_assert(std::size(Message) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The message array doesn't correspond to the available exception codes");
+static_assert(std::size(Info) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The info array doesn't correspond to the available exception codes");
+static_assert(std::size(Restriction) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The restriction array doesn't correspond to the available exception codes");
 
 } // namespace end
 #endif /* GENERATED_EXCEPTION_HEADER_H */

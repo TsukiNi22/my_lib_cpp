@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 04/03/2026 by @author Tsukini
 
 File Name:
 ##  @file utils.hpp
@@ -30,12 +30,12 @@ File Description:
 /* Exception */
 #ifdef _Exception
     // -> Customized exception used for the error/warning handling
-    #include "utils/exception/IException.hpp"               // utils::exception::IException
-    #include "utils/exception/ExceptionDefine.hpp"          // OK/KO, utils::exception::Code, utils::exception::Type
-    #include "utils/exception/basic/NoneException.hpp"      // utils::exception::NoneException
-    #include "utils/exception/basic/ErrorException.hpp"     // utils::exception::ErrorException
-    #include "utils/exception/basic/WarningException.hpp"   // utils::exception::WarningException
-    #include "utils/exception/custom/CustomException.hpp"   // utils::exception::CustomException
+    #include "utils/exception/IException.hpp"                   // utils::exception::IException
+    #include "utils/exception/ExceptionDefine.hpp"              // OK/KO, utils::exception::Code, utils::exception::Type
+    #include "utils/exception/basic/NoneException.hpp"          // utils::exception::NoneException
+    #include "utils/exception/basic/ErrorException.hpp"         // utils::exception::ErrorException
+    #include "utils/exception/basic/WarningException.hpp"       // utils::exception::WarningException
+    #include "utils/exception/custom/CustomException.hpp"       // utils::exception::CustomException
 #endif
 
 /* Write */

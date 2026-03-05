@@ -19,7 +19,7 @@ File Description:
 
 ##### Import #####
 # Import that can't be in the try
-from const import Return, Error, File, Name
+from const import Return, Error, Value, File, Name
 from sys import exit, executable
 from subprocess import check_call
 
@@ -32,6 +32,7 @@ except Exception as e:
 
 # Import that can be checked
 try:
+    import re # Used for pattern matching
     import json # Used to get the json data
     from pathlib import Path # Used to create & edit files and to get the file name
 except ImportError as e:
@@ -47,7 +48,7 @@ if __name__ != "__main__":
     exit(Error.FATAL)
 
 # Recuperation of the data
-data = {}
+data = {} # {code: [message, info, restriction], ...}
 for json_file in Path(File.CONFIG_EXCEPTION).glob("*.json"):
     with json_file.open("r", encoding="utf-8") as f:
         json_content = json.load(f)
@@ -56,20 +57,70 @@ for json_file in Path(File.CONFIG_EXCEPTION).glob("*.json"):
                 print("Duplicated error code encoutered in data extraction")
                 print(f"Auto generated header '{File.GENERATED_EXCEPTION_HEADER}': FAIL")
                 exit(Error.KO)
-            data[error["code"]] = error["message"]
+            data[error["code"]] = [error["message"], error["info"] if error.__contains__("info") else "[None]", error["type"] if error.__contains__("type") else []]
+
+# fichier à parser
+cpp_file = ""
+
+# Patern to find enum value
+enum_pattern = re.compile(r'^\s*(\w+)\s*=\s*(0b[01]+)\s*,?')
+
+# Extract the enum values
+with open(File.EXCEPTION_DEFINE_HEADER, "r", encoding="utf-8") as f:
+    inside_enum = False
+    for line in f:
+        # Detect the start of the enum
+        if "enum Type" in line:
+            inside_enum = True
+            continue
+        # Detect the end of the enum
+        if inside_enum and "};" in line:
+            inside_enum = False
+            continue
+        # Inside the enum, extartc values
+        if inside_enum:
+            match = enum_pattern.match(line)
+            if match:
+                name, value = match.groups()
+                Value.EXCEPTION_TYPE[name] = int(value, 2)
 
 # Format the data
 code_str = ""
 message_str = ""
+info_str = ""
+restriction_str = ""
 data_list = list(data.items())
-for i, (code, message) in enumerate(data_list):
+for i, (code, [message, info, restriction]) in enumerate(data_list):
     # code
     code_str += f"    {code},"
-    if i != len(data_list) - 1: code_str += "\n"
     # message
-    escaped = message.replace('"', r'\"')
-    message_str += f'    /* {code} */ "{escaped}"'
-    if i != len(data_list) - 1: message_str += ",\n"
+    escaped_message = message.replace('"', r'\"')
+    message_str += f'    /* {code} */ "{escaped_message}",'
+    # info
+    escaped_info = info.replace('"', r'\"')
+    info_str += f'    /* {code} */ {"nullptr" if escaped_info == "[None]" else ("\"" + escaped_info + "\"")},'
+    # restriction
+    value = 0
+    types = ""
+    for j in range(len(restriction)):
+        t = restriction[j]
+        value |= Value.EXCEPTION_TYPE.get(t, 0)
+        if Value.EXCEPTION_TYPE.get(t, 0) != 0: types += t + (", " if j != len(restriction) - 1 else "")
+    restriction_str += f"    /* {code} */ {value:#06b}, // allow: {'All' if types == '' else types}"
+    # End of line
+    if i != len(data_list) - 1:
+        code_str += "\n"
+        info_str += "\n"
+        message_str += "\n"
+        restriction_str += "\n"
+
+# Build the restriction comment
+restriction_lines = [
+    "// 0b0000 = no restriction\t(allow all)",
+]
+for name in Value.EXCEPTION_TYPE:
+    restriction_lines.append(f"// {Value.EXCEPTION_TYPE[name]:#06b} = {name}\t\t\t(allow {name})")
+restriction_str_comment = "\n".join(restriction_lines)
 
 # Create the file
 header = Path(File.GENERATED_EXCEPTION_HEADER)
@@ -95,15 +146,16 @@ File Description:
     //----------------------------------------------------------------//
     /* INCLUDE */
 
-    #include <iterator>
-    #include <cstddef>
+    #include <iterator> // std::size
+    #include <cstddef>  // std::size_t
+    #include <cstdint>  // std::uint8_t
 
 namespace utils::exception {{ // namespace start
 //----------------------------------------------------------------//
 /* TYPEDEF */
 
 /* Definition of the different exception code */
-enum Code {{
+enum class Code: std::size_t {{
     Undefined = 0,
 {code_str}
     CODE_SENTINEL // sentinel used for verification
@@ -115,8 +167,23 @@ constexpr inline const char *Message[] = {{
 {message_str}
 }};
 
+/* Potential default info: nullptr same as "[None]" */
+constexpr inline const char *Info[] = {{
+    /* Undefined */ nullptr,
+{info_str}
+}};
+
+/* Potential restriction on exception code */
+{restriction_str_comment}
+constexpr inline const std::uint8_t Restriction[] = {{
+    /* Undefined */ 0b0000, // allow: All
+{restriction_str}
+}};
+
 // Check at the compile time the correspondece between the message & code
 static_assert(std::size(Message) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The message array doesn't correspond to the available exception codes");
+static_assert(std::size(Info) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The info array doesn't correspond to the available exception codes");
+static_assert(std::size(Restriction) == static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL), "The restriction array doesn't correspond to the available exception codes");
 
 }} // namespace end
 #endif /* {Path(File.GENERATED_EXCEPTION_HEADER).stem.upper()}_H */
