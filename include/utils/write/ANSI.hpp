@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 06/03/2026 by @author Tsukini
 
 File Name:
 ##  @file ANSI.hpp

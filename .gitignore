@@ -1,6 +1,5 @@
 ## Compilation
 *.o
-*.a
 a.out
 
 ## Vim

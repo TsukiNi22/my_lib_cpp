@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 06/03/2026 by @author Tsukini
 
 File Name:
 ##  @file NoneException.hpp

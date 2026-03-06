@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 07/03/2026 by @author Tsukini
 
 File Name:
 ##  @file utils.hpp
@@ -46,6 +46,7 @@ File Description:
     #include "utils/write/Char.hpp"     // utils::write::Char
     #include "utils/write/Style.hpp"    // utils::write::Style, utils::write::ResetStyle
     #include "utils/write/ANSI.hpp"     // different inline function for ANSI escape sequences
+    #include "utils/write/format.hpp"   // utils::write::format
 #endif
 
 /* Macro */
