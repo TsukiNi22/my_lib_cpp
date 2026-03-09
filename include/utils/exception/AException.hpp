@@ -23,8 +23,8 @@ File Description:
     #include <cstdint>                      // std::uint8_t
     #include <cstddef>                      // std::size_t
     #include <limits>                       // std::numeric_limits
+    #include <vector>                       // std::vector
     #include <string>                       // std::string
-    #include <array>                        // std::array
 
 namespace utils::exception { // namespace start
 //----------------------------------------------------------------//
@@ -32,10 +32,9 @@ namespace utils::exception { // namespace start
 class AException: virtual public utils::exception::IException {
     private:
         /* Exception Data */
-        constexpr static std::size_t size = static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL);
-        std::array<const char*, size> Message;
-        std::array<const char*, size> Info;
-        std::array<std::uint8_t, size> Restriction;
+        std::vector<const char*> Message;
+        std::vector<const char*> Info;
+        std::vector<std::uint8_t> Restriction;
 
         // --------- Pre-Function --------- //
         void subinit();
@@ -77,9 +76,10 @@ class AException: virtual public utils::exception::IException {
             _loc{loc}, _file{loc.file_name()}, _func{loc.function_name()}, _line{loc.line()},
             _info{info}, _type{type}, _code{code}
         {
-            std::copy(std::begin(utils::exception::Message), std::end(utils::exception::Message), this->Message.begin());
-            std::copy(std::begin(utils::exception::Info), std::end(utils::exception::Info), this->Info.begin());
-            std::copy(std::begin(utils::exception::Restriction), std::end(utils::exception::Restriction), this->Restriction.begin());
+            std::size_t size = static_cast<std::size_t>(utils::exception::Code::CODE_SENTINEL);
+            this->Message.assign(utils::exception::Message, utils::exception::Message + size);
+            this->Info.assign(utils::exception::Info, utils::exception::Info + size);
+            this->Restriction.assign(utils::exception::Restriction, utils::exception::Restriction + size);
             this->subinit();
         }
         AException(const AException& object) = delete;
