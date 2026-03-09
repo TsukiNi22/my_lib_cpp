@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 09/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-c++17.hpp
@@ -18,6 +18,7 @@ File Description:
 
     /* attributes */
     #define nodiscard       [[nodiscard]]                   // Warn for unused return
+    #define noinline        [[noinline]]                    // Cancel any auto inline from the compiler
     #define unused          [[maybe_unused]]                // Signal an unused variable
     #define hidden          [[gnu::visibility("hidden")]]   // Change the visibility on a shared lib
     #define ctor            [[gnu::constructor]]            // Execute before the main

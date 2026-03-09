@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 09/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-c++14.hpp
@@ -18,6 +18,7 @@ File Description:
 
     /* attributes */
     #define nodiscard       __attribute__((warn_unused_result))     // Warn for unused return
+    #define noinline        __attribute__((noinline))               // Cancel any auto inline from the compiler
     #define unused          __attribute__((unused))                 // Signal an unused variable
     #define hidden          __attribute__((visibility("hidden")))   // Change the visibility on a shared lib
     #define ctor            __attribute__((constructor))            // Execute before the main

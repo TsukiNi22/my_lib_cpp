@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 09/03/2026 by @author Tsukini
 
 File Name:
 ##  @file Attribute-fallback.hpp
@@ -18,6 +18,7 @@ File Description:
 
     /* attributes */
     #define nodiscard
+    #define noinline
     #define unused
     #define hidden
     #define ctor
