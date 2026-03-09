@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 05/03/2026 by @author Tsukini
+##  @date 09/03/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.cpp
@@ -22,17 +22,16 @@ File Description:
 #include <cstdint>
 #include <string>
 
-cold utils::exception::AException::AException(std::source_location loc, utils::exception::Type type, utils::exception::Code code, std::string info)
-: IException(), _loc{loc}, _file{loc.file_name()}, _func{loc.function_name()}, _line{loc.line()}, _info{info}, _type{type}, _code{code}
+cold void utils::exception::AException::subinit()
 {
     std::size_t index = static_cast<std::size_t>(this->_code);
 
     // Setup the default info if nessecary
-    if (this->_info == "[None]" && utils::exception::Info[index])
-        this->_info = std::string{utils::exception::Info[index]};
+    if (this->_info == "[None]" && this->Info[index])
+        this->_info = std::string{this->Info[index]};
 
     // Check the restriction for code & type combination
-    std::uint8_t restriction = utils::exception::Restriction[index];
+    std::uint8_t restriction = this->Restriction[index];
     if (this->_code == utils::exception::Code::ExceptionCodeRestriction) return; // Check to counter any mistake and cause a infinit throw loop
     else if (restriction != 0 && (this->_type & restriction) != this->_type)
         throw utils::exception::ErrorException(utils::exception::Code::ExceptionCodeRestriction, this->_loc);
@@ -53,7 +52,7 @@ nodiscard std::string utils::exception::AException::formated() const noexcept
     oss << " " << utils::write::reset();
 
     // Emplacement information
-    oss << utils::write::strong() << this->_file << ":" << this->_line << utils::write::reset() << " -> " << utils::exception::Message[static_cast<std::size_t>(this->_code)] << std::endl;
+    oss << utils::write::strong() << this->_file << ":" << this->_line << utils::write::reset() << " -> " << this->Message[static_cast<std::size_t>(this->_code)] << std::endl;
 
     // Content
     oss << utils::write::color_rgb(175, 100, 0) << "-------------------------------------------" << utils::write::reset() << std::endl;
