@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 04/03/2026 by @author Tsukini
+##  @date 10/03/2026 by @author Tsukini
 
 File Name:
 ##  @file IException.hpp
@@ -48,7 +48,7 @@ class IException: virtual public std::exception {
         IException(IException&& object) = delete;
 
         // ----------- Destructor --------- //
-        ~IException() = default;
+        virtual ~IException() = default;
 };
 
 } // namespace end
