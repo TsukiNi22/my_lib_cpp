@@ -53,7 +53,7 @@ for json_file in Path(File.CONFIG_EXCEPTION).glob("*.json"):
     with json_file.open("r", encoding="utf-8") as f:
         json_content = json.load(f)
         for error in json_content.get("errors", []):
-            if json_content.__contains__(error["code"]):
+            if data.__contains__(error["code"]):
                 print("Duplicated error code encoutered in data extraction")
                 print(f"Auto generated header '{File.GENERATED_EXCEPTION_HEADER}': FAIL")
                 exit(Error.KO)
