@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 07/03/2026 by @author Tsukini
+##  @date 12/03/2026 by @author Tsukini
 
 File Name:
 ##  @file format.cpp
@@ -53,6 +53,7 @@ nodiscard std::string utils::write::format(const std::string& s)
 
     // Format the string
     for (std::size_t i = 0; i < s.size();) {
+
         // Detect the escaped sequence
         if (s[i] == '\\' && i + 1 < s.size() && (s[i + 1] == '<' || s[i + 1] == '>')) {
             formated += s[i + 1];
@@ -85,8 +86,10 @@ nodiscard std::string utils::write::format(const std::string& s)
                     it->second(formated);
 
                 // Detect the end of the sequence
-                if (sep == std::string::npos)
+                if (sep == std::string::npos) {
+                    start = sep;
                     break;
+                }
 
                 // inc
                 start = sep + 1;
