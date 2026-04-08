@@ -73,5 +73,6 @@ File Description:
 /* Concepts */
 #ifdef _Concepts
     // -> Definition of different concepts
+    #include "utils/concepts/GlobalConcepts.hpp"    // Global concepts
     #include "utils/concepts/OperationConcepts.hpp" // Operation concepts
 #endif
