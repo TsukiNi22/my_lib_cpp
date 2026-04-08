@@ -29,6 +29,7 @@ namespace utils::exception { // namespace start
 /* Definition of the different exception code */
 enum class Code: std::size_t {
     Undefined = 0,
+    VectorInvalidIndex,
     ExceptionCodeRestriction,
     MouseEvent,
     CODE_SENTINEL // sentinel used for verification
@@ -37,6 +38,7 @@ enum class Code: std::size_t {
 /* Corresponding exception message for each code */
 constexpr inline const char *Message[] = {
     /* Undefined */ "An undefined error has occured",
+    /* VectorInvalidIndex */ "Invalid index on a vector",
     /* ExceptionCodeRestriction */ "Error during the setup of an exception",
     /* MouseEvent */ "Error during the read of the mouse event",
 };
@@ -44,6 +46,7 @@ constexpr inline const char *Message[] = {
 /* Potential default info: nullptr same as "[None]" */
 constexpr inline const char *Info[] = {
     /* Undefined */ nullptr,
+    /* VectorInvalidIndex */ "Can't retrieve the value, the VectorX dosen't have this index",
     /* ExceptionCodeRestriction */ "Restriction trigerred on a code & type combination",
     /* MouseEvent */ nullptr,
 };
@@ -56,6 +59,7 @@ constexpr inline const char *Info[] = {
 // 0b1000 = Warning			(allow Warning)
 constexpr inline const std::uint8_t Restriction[] = {
     /* Undefined */ 0b0000, // allow: All
+    /* VectorInvalidIndex */ 0b1110, // allow: Fatal, Error, Warning
     /* ExceptionCodeRestriction */ 0b0110, // allow: Fatal, Error
     /* MouseEvent */ 0b0110, // allow: Fatal, Error
 };

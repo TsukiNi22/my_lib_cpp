@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 09/03/2026 by @author Tsukini
+##  @date 02/04/2026 by @author Tsukini
 
 File Name:
 ##  @file AException.cpp

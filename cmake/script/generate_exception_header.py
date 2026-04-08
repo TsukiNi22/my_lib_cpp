@@ -56,7 +56,7 @@ for json_file in Path(File.CONFIG_EXCEPTION).glob("*.json"):
             if data.__contains__(error["code"]):
                 print("Duplicated error code encoutered in data extraction")
                 print(f"Auto generated header '{File.GENERATED_EXCEPTION_HEADER}': FAIL")
-                exit(Error.KO)
+                exit(Return.KO)
             data[error["code"]] = [error["message"], error["info"] if error.__contains__("info") else "[None]", error["restrictions"] if error.__contains__("restrictions") else []]
 
 # fichier à parser
