@@ -58,8 +58,9 @@ class Vector2: public utils::vector::IVector<T> {
         {return {std::clamp(x, min.x, max.x), std::clamp(y, min.y, max.y)};}
 
         // ------- Special-Function ------- //
-        T dot(const Vector2& v) const
-        requires utils::concepts::Multipliable<T> && utils::concepts::Addable<T> {return x * v.x + y * v.y;}
+        template<typename U>
+        T dot(const Vector2<U>& v) const
+        requires utils::concepts::MultipliableWith<T, U> && utils::concepts::AddableWith<T, U> {return x * v.x + y * v.y;}
         T length() const
         requires utils::concepts::Multipliable<T> {return std::sqrt(x * x + y * y);}
         T lengthSquared() const
@@ -72,8 +73,6 @@ class Vector2: public utils::vector::IVector<T> {
         }
 
         // ------------ Operator ---------- //
-        Vector2& operator=(const Vector2& object) = default;
-        Vector2& operator=(Vector2&& object) = default;
         T& operator[](std::size_t index) {
             if (index >= MAX_INDEX_VECTOR2)
                 throw utils::exception::ErrorException(utils::exception::Code::VectorInvalidIndex);
@@ -86,66 +85,176 @@ class Vector2: public utils::vector::IVector<T> {
         }
 
         // -------- Basic-Operator -------- //
-        Vector2 operator+(const T& v) const
-        requires utils::concepts::Addable<T> {return Vector2(x + v, y + v);}
-        Vector2 operator+(const Vector2& v) const
-        requires utils::concepts::Addable<T> {return Vector2(x + v.x, y + v.y);}
-        Vector2 operator-(const T& v) const
-        requires utils::concepts::Subtractable<T> {return Vector2(x - v, y - v);}
-        Vector2 operator-(const Vector2& v) const
-        requires utils::concepts::Subtractable<T> {return Vector2(x - v.x, y - v.y);}
-        Vector2 operator*(const T& v) const
-        requires utils::concepts::Multipliable<T> {return Vector2(x * v, y * v);}
-        Vector2 operator*(const Vector2& v) const
-        requires utils::concepts::Multipliable<T> {return Vector2(x * v.x, y * v.y);}
-        Vector2 operator/(const T& v) const
-        requires utils::concepts::Divisible<T> {return Vector2(x / v, y / v);}
-        Vector2 operator/(const Vector2& v) const
-        requires utils::concepts::Divisible<T> {return Vector2(x / v.x, y / v.y);}
+        template<typename U>
+        auto operator+(const U& v) const
+        requires utils::concepts::AddableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x + v, y + v);
+        }
+
+        template<typename U>
+        auto operator+(const Vector2<U>& v) const
+        requires utils::concepts::AddableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x + v.x, y + v.y);
+        }
+
+        template<typename U>
+        auto operator-(const U& v) const
+        requires utils::concepts::SubtractableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x - v, y - v);
+        }
+
+        template<typename U>
+        auto operator-(const Vector2<U>& v) const
+        requires utils::concepts::SubtractableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x - v.x, y - v.y);
+        }
+
+        template<typename U>
+        auto operator*(const U& v) const
+        requires utils::concepts::MultipliableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x * v, y * v);
+        }
+
+        template<typename U>
+        auto operator*(const Vector2<U>& v) const
+        requires utils::concepts::MultipliableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x * v.x, y * v.y);
+        }
+
+        template<typename U>
+        auto operator/(const U& v) const
+        requires utils::concepts::DivisibleWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x / v, y / v);
+        }
+
+        template<typename U>
+        auto operator/(const Vector2<U>& v) const
+        requires utils::concepts::DivisibleWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x / v.x, y / v.y);
+        }
+
+        // -------- Bitwise-Operator -------- //
+        template<typename U>
+        auto operator&(const Vector2<U>& v) const
+        requires utils::concepts::BitwiseAndableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x & v.x, y & v.y);
+        }
+
+        template<typename U>
+        auto operator|(const Vector2<U>& v) const
+        requires utils::concepts::BitwiseOrableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x | v.x, y | v.y);
+        }
+
+        template<typename U>
+        auto operator^(const Vector2<U>& v) const
+        requires utils::concepts::BitwiseXorableWith<T, U>
+        {
+            using R = std::common_type_t<T, U>;
+            return Vector2<R>(x ^ v.x, y ^ v.y);
+        }
 
         // ----- Assignment-Operator ----- //
-        Vector2& operator+=(const T& v)
-        requires utils::concepts::AddAssignable<T> {x += v; y += v; return *this;}
-        Vector2& operator+=(const Vector2& v)
-        requires utils::concepts::AddAssignable<T> {x += v.x; y += v.y; return *this;}
-        Vector2& operator-=(const T& v)
-        requires utils::concepts::SubtractAssignable<T> {x -= v; y -= v; return *this;}
-        Vector2& operator-=(const Vector2& v)
-        requires utils::concepts::SubtractAssignable<T> {x -= v.x; y -= v.y; return *this;}
-        Vector2& operator*=(const T& v)
-        requires utils::concepts::MultiplyAssignable<T> {x *= v; y *= v; return *this;}
-        Vector2& operator*=(const Vector2& v)
-        requires utils::concepts::MultiplyAssignable<T> {x *= v.x; y *= v.y; return *this;}
-        Vector2& operator/=(const T& v)
-        requires utils::concepts::DivideAssignable<T> {x /= v; y /= v; return *this;}
-        Vector2& operator/=(const Vector2& v)
-        requires utils::concepts::DivideAssignable<T> {x /= v.x; y /= v.y; return *this;}
+        template<typename U>
+        Vector2& operator=(const Vector2<U>& v)
+        requires std::assignable_from<T&, U>
+        {
+            x = v.x;
+            y = v.y;
+            return *this;
+        }
+
+        template<typename U>
+        Vector2& operator=(Vector2<U>&& v)
+        requires std::assignable_from<T&, U>
+        {
+            x = std::move(v.x);
+            y = std::move(v.y);
+            return *this;
+        }
+
+        template<typename U>
+        Vector2& operator+=(const U& v)
+        requires utils::concepts::AddAssignableWith<T, U> {x += v; y += v; return *this;}
+        template<typename U>
+        Vector2& operator+=(const Vector2<U>& v)
+        requires utils::concepts::AddAssignableWith<T, U> {x += v.x; y += v.y; return *this;}
+        template<typename U>
+        Vector2& operator-=(const U& v)
+        requires utils::concepts::SubtractAssignableWith<T, U> {x -= v; y -= v; return *this;}
+        template<typename U>
+        Vector2& operator-=(const Vector2<U>& v)
+        requires utils::concepts::SubtractAssignableWith<T, U> {x -= v.x; y -= v.y; return *this;}
+        template<typename U>
+        Vector2& operator*=(const U& v)
+        requires utils::concepts::MultiplyAssignableWith<T, U> {x *= v; y *= v; return *this;}
+        template<typename U>
+        Vector2& operator*=(const Vector2<U>& v)
+        requires utils::concepts::MultiplyAssignableWith<T, U> {x *= v.x; y *= v.y; return *this;}
+        template<typename U>
+        Vector2& operator/=(const U& v)
+        requires utils::concepts::DivideAssignableWith<T, U> {x /= v; y /= v; return *this;}
+        template<typename U>
+        Vector2& operator/=(const Vector2<U>& v)
+        requires utils::concepts::DivideAssignableWith<T, U> {x /= v.x; y /= v.y; return *this;}
 
         // ---------- Comparison ---------- //
-        bool operator==(const T& v) const
-        requires utils::concepts::EqualityComparable<T> {return (x == x && y == y);}
-        bool operator==(const Vector2& v) const
-        requires utils::concepts::EqualityComparable<T> {return (x == v.x && y == v.y);}
-        bool operator!=(const T& v) const
-        requires utils::concepts::EqualityComparable<T> {return (x != x || y != y);}
-        bool operator!=(const Vector2& v) const
-        requires utils::concepts::EqualityComparable<T> {return (x != v.x || y != v.y);}
-        bool operator<(const T& v) const
-        requires utils::concepts::Comparable<T> {return (x < x && y < y);}
-        bool operator<(const Vector2& v) const
-        requires utils::concepts::Comparable<T> {return (x < v.x && y < v.y);}
-        bool operator<=(const T& v) const
-        requires utils::concepts::Comparable<T> {return (x <= x && y <= y);}
-        bool operator<=(const Vector2& v) const
-        requires utils::concepts::Comparable<T> {return (x <= v.x && y <= v.y);}
-        bool operator>(const T& v) const
-        requires utils::concepts::Comparable<T> {return (x > x && y > y);}
-        bool operator>(const Vector2& v) const
-        requires utils::concepts::Comparable<T> {return (x > v.x && y > v.y);}
-        bool operator>=(const T& v) const
-        requires utils::concepts::Comparable<T> {return (x >= x && y >= y);}
-        bool operator>=(const Vector2& v) const
-        requires utils::concepts::Comparable<T> {return (x >= v.x && y >= v.y);}
+        template<typename U>
+        bool operator==(const U& v) const
+        requires utils::concepts::EqualityComparableWith<T, U> {return (x == v && y == v);}
+        template<typename U>
+        bool operator==(const Vector2<U>& v) const
+        requires utils::concepts::EqualityComparableWith<T, U> {return (x == v.x && y == v.y);}
+        template<typename U>
+        bool operator!=(const U& v) const
+        requires utils::concepts::EqualityComparableWith<T, U> {return (x != v || y != v);}
+        template<typename U>
+        bool operator!=(const Vector2<U>& v) const
+        requires utils::concepts::EqualityComparableWith<T, U> {return (x != v.x || y != v.y);}
+        template<typename U>
+        bool operator<(const U& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x < v && y < v);}
+        template<typename U>
+        bool operator<(const Vector2<U>& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x < v.x && y < v.y);}
+        template<typename U>
+        bool operator<=(const U& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x <= v && y <= v);}
+        template<typename U>
+        bool operator<=(const Vector2<U>& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x <= v.x && y <= v.y);}
+        template<typename U>
+        bool operator>(const U& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x > v && y > v);}
+        template<typename U>
+        bool operator>(const Vector2<U>& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x > v.x && y > v.y);}
+        template<typename U>
+        bool operator>=(const U& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x >= v && y >= v);}
+        template<typename U>
+        bool operator>=(const Vector2<U>& v) const
+        requires utils::concepts::ComparableWith<T, U> {return (x >= v.x && y >= v.y);}
 
         // ------------ Unary ------------- //
         Vector2 operator-() const
@@ -153,64 +262,107 @@ class Vector2: public utils::vector::IVector<T> {
 
         // ---------- Constructor --------- //
         Vector2() = default;
-        Vector2(T x, T y): x(x), y(y) {};
-        Vector2(const Vector2& object) = default;
-        Vector2(Vector2&& object) = default;
+        template<typename U, typename R>
+        Vector2(U x, R y)
+        requires std::constructible_from<T, U> && std::constructible_from<T, R>: x(x), y(y) {}
+        template<typename U>
+        Vector2(const Vector2<U>& v)
+        requires std::constructible_from<T, U>: x(v.x), y(v.y) {}
+        template<typename U>
+        Vector2(Vector2<U>&& v)
+        requires std::constructible_from<T, U&&>: x(std::move(v.x)), y(std::move(v.y)) {}
 
         // ----------- Destructor --------- //
         ~Vector2() = default;
 };
 
 // -------- Basic-Operator (reverse) -------- //
-template<typename T>
-utils::vector::Vector2<T> operator+(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Addable<T>
-{return utils::vector::Vector2<T>(lhs + rhs.x, lhs + rhs.y);}
+template<typename T, typename U>
+auto operator+(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::AddableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return utils::vector::Vector2<R>(lhs + rhs.x, lhs + rhs.y);
+}
 
-template<typename T>
-utils::vector::Vector2<T> operator-(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Subtractable<T>
-{return utils::vector::Vector2<T>(lhs - rhs.x, lhs - rhs.y);}
+template<typename T, typename U>
+auto operator-(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::SubtractableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return utils::vector::Vector2<R>(lhs - rhs.x, lhs - rhs.y);
+}
 
-template<typename T>
-utils::vector::Vector2<T> operator*(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Multipliable<T>
-{return utils::vector::Vector2<T>(lhs * rhs.x, lhs * rhs.y);}
+template<typename T, typename U>
+auto operator*(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::MultipliableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return utils::vector::Vector2<R>(lhs * rhs.x, lhs * rhs.y);
+}
 
-template<typename T>
-utils::vector::Vector2<T> operator/(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Divisible<T>
-{return utils::vector::Vector2<T>(lhs / rhs.x, lhs / rhs.y);}
+template<typename T, typename U>
+auto operator/(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::DivisibleWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return utils::vector::Vector2<R>(lhs / rhs.x, lhs / rhs.y);
+}
+
+// -------- Bitwise-Operator -------- //
+template<typename T, typename U>
+auto operator&(const T& lhs, const Vector2<U>& rhs)
+requires utils::concepts::BitwiseAndableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return Vector2<R>(lhs & rhs.x, lhs & rhs.y);
+}
+
+template<typename T, typename U>
+auto operator|(const T& lhs, const Vector2<U>& rhs)
+requires utils::concepts::BitwiseOrableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return Vector2<R>(lhs | rhs.x, lhs | rhs.y);
+}
+
+template<typename T, typename U>
+auto operator^(const T& lhs, const Vector2<U>& rhs)
+requires utils::concepts::BitwiseXorableWith<T, U>
+{
+    using R = std::common_type_t<T, U>;
+    return Vector2<R>(lhs ^ rhs.x, lhs ^ rhs.y);
+}
 
 // -------- Comparison (reverse) -------- //
-template<typename T>
-bool operator==(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::EqualityComparable<T>
+template<typename T, typename U>
+bool operator==(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::EqualityComparableWith<T, U>
 {return (lhs == rhs.x && lhs == rhs.y);}
 
-template<typename T>
-bool operator!=(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::EqualityComparable<T>
+template<typename T, typename U>
+bool operator!=(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::EqualityComparableWith<T, U>
 {return (lhs != rhs.x || lhs != rhs.y);}
 
-template<typename T>
-bool operator<(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Comparable<T>
+template<typename T, typename U>
+bool operator<(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::ComparableWith<T, U>
 {return (lhs < rhs.x && lhs < rhs.y);}
 
-template<typename T>
-bool operator<=(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Comparable<T>
+template<typename T, typename U>
+bool operator<=(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::ComparableWith<T, U>
 {return (lhs <= rhs.x && lhs <= rhs.y);}
 
-template<typename T>
-bool operator>(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Comparable<T>
+template<typename T, typename U>
+bool operator>(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::ComparableWith<T, U>
 {return (lhs > rhs.x && lhs > rhs.y);}
 
-template<typename T>
-bool operator>=(const T& lhs, const utils::vector::Vector2<T>& rhs)
-requires utils::concepts::Comparable<T>
+template<typename T, typename U>
+bool operator>=(const T& lhs, const utils::vector::Vector2<U>& rhs)
+requires utils::concepts::ComparableWith<T, U>
 {return (lhs >= rhs.x && lhs >= rhs.y);}
 
 // -------- Comparison (reverse) -------- //
