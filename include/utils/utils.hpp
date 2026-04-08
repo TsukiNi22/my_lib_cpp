@@ -29,6 +29,7 @@ File Description:
 #ifdef _Tool
     #define _Vector
     #define _Concepts
+    #define _Algorithms
 #endif
 
 //----------------------------------------------------------------//
@@ -75,4 +76,13 @@ File Description:
     // -> Definition of different concepts
     #include "utils/concepts/GlobalConcepts.hpp"    // Global concepts
     #include "utils/concepts/OperationConcepts.hpp" // Operation concepts
+#endif
+
+/* Algorithms */
+#ifdef _Algorithms
+    // -> Definition of different algorithms
+    // -> c2dmp-hsm: heuristic string matching
+    #include "utils/algorithms/c2dmp-hsm/c2dmp-hsm.hpp"             // utils::algorithms::c2dmp::c2dmp
+    #include "utils/algorithms/c2dmp-hsm/algorithm/optimized.hpp"   // utils::algorithms::c2dmp::c2dmp_optimized
+    #include "utils/algorithms/c2dmp-hsm/algorithm/simplified.hpp"  // utils::algorithms::c2dmp::c2dmp_simplified
 #endif
