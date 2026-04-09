@@ -61,14 +61,14 @@ utils::cli::Cli::~Cli()
 
 /* Default commands
  * help -> display commands help
- * bey == quit == exit -> exit the cli
+ * bye == quit == exit -> exit the cli
 */
 static void help()
 {
     std::cout
     << "help:" << std::endl
     << " help\t- Display commands help" << std::endl
-    << " bey\t- Exit the cli" << std::endl
+    << " bye\t- Exit the cli" << std::endl
     << " quit\t- Exit the cli" << std::endl
     << " exit\t- Exit the cli" << std::endl;
 }
@@ -79,12 +79,8 @@ static void exit()
 {
     throw utils::exception::NoneException(utils::exception::Code::Exit);
 }
-void bey(unused const std::string&) {exit();}
-void bey(unused const std::vector<std::string>&) {exit();}
-void quit(unused const std::string&) {exit();}
-void quit(unused const std::vector<std::string>&) {exit();}
-void exit(unused const std::string&) {exit();}
-void exit(unused const std::vector<std::string>&) {exit();}
+void bye() {exit();}
+void quit() {exit();}
 
 void utils::cli::Cli::resetCommands()
 {
@@ -93,17 +89,17 @@ void utils::cli::Cli::resetCommands()
 
     // Parsed commands
     using FnVec = std::function<void(const std::vector<std::string>&)>;
-    this->_parsedCommands["help"] = std::make_tuple(FnVec([](const std::vector<std::string>& inputs){help(inputs);}), 0, 0);
-    this->_parsedCommands["bey"]  = std::make_tuple(FnVec([](const std::vector<std::string>& inputs){bey(inputs);}), 0, 0);
-    this->_parsedCommands["quit"] = std::make_tuple(FnVec([](const std::vector<std::string>& inputs){quit(inputs);}), 0, 0);
-    this->_parsedCommands["exit"] = std::make_tuple(FnVec([](const std::vector<std::string>& inputs){exit(inputs);}), 0, 0);
+    this->_parsedCommands["help"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){help();}), 0, 0);
+    this->_parsedCommands["bye"]  = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){bye();}), 0, 0);
+    this->_parsedCommands["quit"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){quit();}), 0, 0);
+    this->_parsedCommands["exit"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){exit();}), 0, 0);
 
     // Raw commands
     using FnStr = std::function<void(const std::string&)>;
-    this->_rawCommands["help"] = FnStr([](const std::string& input){help(input);});
-    this->_rawCommands["bey"]  = FnStr([](const std::string& input){bey(input);});
-    this->_rawCommands["quit"] = FnStr([](const std::string& input){quit(input);});
-    this->_rawCommands["exit"] = FnStr([](const std::string& input){exit(input);});
+    this->_rawCommands["help"] = FnStr([](unused const std::string& input){help();});
+    this->_rawCommands["bye"]  = FnStr([](unused const std::string& input){bye();});
+    this->_rawCommands["quit"] = FnStr([](unused const std::string& input){quit();});
+    this->_rawCommands["exit"] = FnStr([](unused const std::string& input){exit();});
 }
 
 void utils::cli::Cli::resetHooks()

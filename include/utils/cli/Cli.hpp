@@ -43,7 +43,10 @@ namespace utils::cli { // namespace start
 // Return of the parser
 using ParsedData =
 std::vector< // Groupe of commands, separated by '&&', '||' and ';'
-    std::vector< // Command separated by ' ' and '\t', the last std::string represent the separator '&&', '||', ';' or '\0' for nothing/last
+    std::vector< // Command separated by ' ' and '\t'
+        // the first std::string represent only the command
+        // The input parsed (depende on the parser mode)
+        // the last std::string represent the separator '&&', '||', ';' or '' for nothing/last
         std::string
     >
 >;

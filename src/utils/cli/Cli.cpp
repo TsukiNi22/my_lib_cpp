@@ -26,11 +26,16 @@ File Description:
 #include "utils/write/ANSI.hpp"
 #include "utils/cli/Cli.hpp"
 #include "utils/cli/Flags.hpp"
+#include <unordered_map>
+#include <functional>
 #include <exception>
 #include <algorithm>
 #include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <vector>
 #include <string>
+#include <tuple>
 
 static std::string trim(const std::string& s)
 {
@@ -118,7 +123,7 @@ void utils::cli::Cli::start()
                     std::string info = e.info();
                     if (info == "Unknow command") this->_code = 128;
                     else if (info == "Command not implemented") this->_code = 129;
-                    else if (info == "Callback exception") {
+                    else if (info.starts_with("Callback exception: ")) {
                         if (!(this->_flags & utils::cli::Flag::CATCH)) throw;
                         this->_code = 130;
                     }
@@ -343,8 +348,69 @@ hot utils::cli::ParsedData utils::cli::Cli::parse(const std::string& input)
 hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
 {
     this->execMiddlewares.callBefore(parsedInput);
+    std::unordered_map<std::string, std::tuple<std::function<void(const std::vector<std::string>&)>, std::int16_t, std::int16_t>>::iterator itParsed;
+    std::unordered_map<std::string, std::function<void(const std::string&)>>::iterator itRaw;
+    const char* lastExceptionInfo = nullptr;
+    std::uint8_t status = 0;
 
-    /* ... */
+    // For each commands
+    for (std::size_t i = 0; i < parsedInput.size(); ++i) {
+        const std::vector<std::string>& command = parsedInput[i];
+
+        // Try to exec the command
+        status = 0;
+        try {
+            // Try to find the command
+            itParsed = this->_parsedCommands.find(command.front());
+            itRaw = this->_rawCommands.find(command.front());
+            if (this->_flags & utils::cli::Flag::PARSED && itParsed != this->_parsedCommands.end()) {
+                this->commandMiddlewares.callBefore(command.front());
+                if (std::get<0>(itParsed->second)) // Check the command existense
+                    std::get<0>(itParsed->second)(std::vector<std::string>(command.begin() + 1, command.end() - 1));
+                else
+                    throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
+                this->commandMiddlewares.callAfter(command.front());
+            } else if (!(this->_flags & utils::cli::Flag::PARSED) && itRaw != this->_rawCommands.end()) {
+                this->commandMiddlewares.callBefore(command.front());
+                if (itRaw->second) // Check the command existense
+                    (itRaw->second)(command[1]);
+                else
+                    throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
+                this->commandMiddlewares.callAfter(command.front());
+            } else {
+                throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Unknow command");
+            }
+        } catch (const utils::exception::CustomException& e) {
+            lastExceptionInfo = e.info();
+            if (!(this->_flags & utils::cli::Flag::CATCH)) throw;
+            if (std::strcmp(lastExceptionInfo, "Unknow command") == 0 || std::strcmp(lastExceptionInfo, "Command not implemented") == 0) status = 1;
+            else status = 2;
+        } catch (const utils::exception::NoneException& e) {
+            throw;
+        } catch (const std::exception& e) {
+            lastExceptionInfo = e.what();
+            if (!(this->_flags & utils::cli::Flag::CATCH))
+                throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, std::string("Callback exception: ") + lastExceptionInfo);
+            status = 2;
+        }
+
+        // Check the logic
+        if (command.back() == "&&") {
+            if (status == 0) continue;
+            // Skip to the next ';' or ''
+            for (; i < parsedInput.size() && (parsedInput[i].back() == "&&" || parsedInput[i].back() == "||"); ++i);
+        } else if (command.back() == "||") {
+            if (status != 0) continue;
+            // Skip to the next ';' or ''
+            for (; i < parsedInput.size() && (parsedInput[i].back() == "&&" || parsedInput[i].back() == "||"); ++i);
+        }
+    }
+
+    // Throw if the last command have fail
+    if (status == 1)
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, lastExceptionInfo);
+    else if (status == 2)
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, std::string("Callback exception: ") + lastExceptionInfo);
 
     this->execMiddlewares.callAfter(parsedInput);
 }
