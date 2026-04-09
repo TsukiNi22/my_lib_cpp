@@ -1,4 +1,6 @@
 # Utils
+> [!NOTE]
+> To have more information look directly in the files
 
 ### Table of Contents
  - [Exception](#exception)
@@ -32,13 +34,89 @@
 > [!NOTE]
 > Customizable exception (None, Error, Warning, Fatal)
 
+Included from:
+```cpp
+// Namespace used
+using utils::exception
+
+/* define */
+#define OK 0
+#define KO -1
+Type::* // None, Error, Warning, Fatal
+Code::* // defined in the json
+
+/* interface */
+IException
+
+/* basic */
+NoneException
+ErrorException
+WarningException
+
+/* custom */
+CustomException
+```
+
+Exception config `cmake/config/exception/*.json` (empty exemple):
+> The `.json` are converted in a `.hpp` by the py script located at `cmake/script/generate_exception_header.py`
+
+```json
+{
+    "errors": [
+        {
+            "code": "<code_name>", // used with utils::exception::Code::<code_name>
+            "message": "<error_message>", // Returned by what()
+            "info": "<sub_info>", // Return by info(), can be removed and will be equal to "[None]" by default
+            "restrictions": ["<restriction1>", "<restriction2>", ...] // Restrict the <code_name> to certain type of error, can be removed and there will be no restriction
+        }
+    ]
+}
+```
+
 ## Write
 > [!NOTE]
 > Writing macro and define for ouput edition
 
+Included from:
+```cpp
+// Namespace used
+using utils::write
+
+/* format */
+format // Format a string using <style1|style2|...> to insert ANSI in a string (look at the file `format.hpp` for more details)
+
+/* color */
+Color
+BackColor
+
+/* char */
+Char // Special ascii char such as ESC, ETB, ...
+
+/* style */
+Style
+ResetStyle
+
+/* ANSI */
+// Many functions for ANSI escape sequence (look at the file `ANSI.hpp` for more details)
+
+```
+
 ## Vector
 > [!NOTE]
 > Definition of vector2<T> and vector3<T>
+
+Included from:
+```cpp
+// Namespace used
+using utils::vector
+
+/* interface */
+IVector<T>
+
+/* vectorX */
+Vector2<T>
+Vector3<T>
+```
 
 ## Attribute
 > [!NOTE]
@@ -52,6 +130,57 @@
 > [!NOTE]
 > Different algorithms such as the c2dmp-hsm ((here)[https://github.com/TsukiNi22/c2dmp-hsm])
 
+Included from:
+```cpp
+// Namespace used
+using utils::algorithms
+
+/* c2dmp-hsm */
+c2dmp::c2dmp // You should call this one, automatic redirection to the best one
+c2dmp::c2dmp_optimized // Optimized version of the c2dmp-hsm and the one used by default
+c2dmp::c2dmp_simplified // Semi Optimized version of the c2dmp-hsm (deprecated)
+```
+
 ## Cli
 > [!NOTE]
 > Command line interface customizable using flags, hooks and middlewares
+
+Included from:
+```cpp
+// Namespace used
+using utils::cli
+
+/* type */
+ParsedData
+
+/* class */
+Cli
+Middlewares
+
+/* flag */
+enum Flag {
+    DEBUG           = 1 << 0, // Active verbose for internal action
+    NOECHO          = 1 << 1, // Disable echo of the input
+    CATCH           = 1 << 2, // Enable error catching on execution
+    EMPTY_INPUT     = 1 << 3, // Ingore empty input (default: error)
+    TRIM            = 1 << 4, // Enable trim on input
+    PARSED          = 1 << 5, // Active parser for the input and send vector<std::string> (default: std::string)
+    PROMPT          = 1 << 6, // Active the prompt
+    LOGIC           = 1 << 7, // Enable logic with '&&', '||' and ';'
+    ARROW           = 1 << 8, // Activate left, right
+    HISTORY         = 1 << 9, // Activate history, up and down arrow
+    HINT            = 1 << 10, // Display hint when a command fail
+    AUTO_COMPLETION = 1 << 11, // Active auto completion with `\t`
+};
+
+// Namespace used
+using utils::cli::Flags
+
+/* flags */
+constexpr std::uint32_t DEFAULT = CATCH | EMPTY_INPUT | TRIM | PROMPT | ARROW;
+constexpr std::uint32_t DUMB    = 0;
+constexpr std::uint32_t ALL     = DEBUG | CATCH | NOECHO | TRIM | EMPTY_INPUT | PARSED | PROMPT | LOGIC | ARROW | HISTORY | HINT | AUTO_COMPLETION;
+constexpr std::uint32_t TERM1   = CATCH | EMPTY_INPUT | TRIM | PARSED | PROMPT | EMPTY_INPUT | LOGIC | ARROW | HISTORY;
+constexpr std::uint32_t TERM2   = TERM1 | HINT | AUTO_COMPLETION;
+constexpr std::uint32_t DEV     = TERM2 | DEBUG;
+```
