@@ -16,7 +16,7 @@ File Description:
 #ifdef _Utils
     #define _Handling
     #define _Attribute
-    #define _Tool
+    #define _Tools
 #endif
 
 /* Activate all handling include */
@@ -27,7 +27,7 @@ File Description:
 #endif
 
 /* Activate all tool include */
-#ifdef _Tool
+#ifdef _Tools
     #define _Vector
     #define _Concepts
     #define _Algorithms

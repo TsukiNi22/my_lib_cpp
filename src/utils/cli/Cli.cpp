@@ -216,7 +216,6 @@ hot nodiscard std::string utils::cli::Cli::getInput()
 
         // Auto completion
         else if (this->_flags & utils::cli::Flag::AUTO_COMPLETION && c == '\t' && trim(input).find(" ", 0) == std::string::npos) {
-            if (echo) deleteChars(input.size());
             // For each command find the most appropriate one
             min_dist = 0.0f;
             dist = 0.0f;
@@ -242,7 +241,7 @@ hot nodiscard std::string utils::cli::Cli::getInput()
                 }
             }
             input = hint;
-            if (echo) std::cout << input;
+            indexBuffer = input.size();
         }
 
         // Arrow left, write
