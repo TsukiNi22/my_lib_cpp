@@ -175,6 +175,7 @@ hot nodiscard std::string utils::cli::Cli::getInput()
 {
     bool echo = !(this->_flags & utils::cli::Flag:: NOECHO);
     std::size_t indexBuffer = 0, indexHistory = this->_history.size();
+    std::size_t lastInputSize = 0, lastIndexBuffer = indexBuffer;
     float min_dist = 0.0f, dist = 0.0f;
     bool escape = false, first = true, onInput = false;
     std::string input, inputBuff, hint;
@@ -189,7 +190,6 @@ hot nodiscard std::string utils::cli::Cli::getInput()
 
     // Loop to get full input
     while (true) {
-
         // Get the char
         if (this->_getcHook) likely {
             try {
@@ -241,23 +241,17 @@ hot nodiscard std::string utils::cli::Cli::getInput()
         }
 
         // Arrow left, write
-        else if (this->_flags & utils::cli::Flag::ARROW && escape && input.back() == '[' && (c == 'C' || c == 'D')) {
-            if (echo) deleteChars(1);
-            input.pop_back();
-            if (c == 'C' && indexBuffer <= input.size()) { // right
+        else if (this->_flags & utils::cli::Flag::ARROW && escape && (indexBuffer > 0 && input[indexBuffer - 1] == '[') && (c == 'C' || c == 'D')) {
+            input.erase(--indexBuffer, 1);
+            if (c == 'C' && indexBuffer < input.size()) // right
                 ++indexBuffer;
-                std::cout << utils::write::right(1);
-            }
-            else if (c == 'D' && indexBuffer > 0) { // left
+            else if (c == 'D' && indexBuffer > 0) // left
                 --indexBuffer;
-                std::cout << utils::write::left(1);
-            }
         }
 
         // History with arrow up, down
-        else if (this->_flags & utils::cli::Flag::HISTORY && escape && input.back() == '[' && (c == 'A' || c == 'B')) {
-            if (echo) deleteChars(input.size());
-            input.pop_back();
+        else if (this->_flags & utils::cli::Flag::HISTORY && escape && (indexBuffer > 0 && input[indexBuffer - 1] == '[') && (c == 'A' || c == 'B')) {
+            input.erase(--indexBuffer, 1);
             onInput = (indexHistory == this->_history.size());
             if (c == 'A') { // Up
                 if (indexHistory == 0) indexHistory = this->_history.size();
@@ -273,27 +267,24 @@ hot nodiscard std::string utils::cli::Cli::getInput()
                 inputBuff = this->_history[indexHistory];
                 std::swap(inputBuff, input);
             } else input = this->_history[indexHistory];
-            if (echo) std::cout << input;
+            indexBuffer = input.size();
         }
 
         // Delete char
         else if (c == 127 || c == '\b') {
-            if (!input.empty()) {
-                if (echo) deleteChars(1);
+            if (indexBuffer > 0)
                 input.erase(--indexBuffer, 1);
-            }
         }
 
         // End of input
         else if (c == this->_inputDelimitor) {
+            std::cout << std::endl;
             break;
         }
 
         // Add char to the input
         else if (std::isprint(c)) likely {
-            if (echo) deleteChars(1);
             input.insert(indexBuffer++, 1, c);
-            if (echo) std::cout << input;
         }
 
         // Detect escape sequence
@@ -303,6 +294,21 @@ hot nodiscard std::string utils::cli::Cli::getInput()
             escape = false;
         }
 
+        if (echo) {
+            // Reset the cursor place
+            if (lastInputSize - lastIndexBuffer > 0)
+                std::cout << utils::write::right(lastInputSize - lastIndexBuffer);
+
+            // Refresh input display
+            deleteChars(lastInputSize);
+            std::cout << input;
+            lastInputSize = input.size();
+            lastIndexBuffer = indexBuffer;
+
+            // Place the cursor
+            if (input.size() - indexBuffer > 0)
+                std::cout << utils::write::left(input.size() - indexBuffer);
+        }
         std::cout << std::flush;
     }
 

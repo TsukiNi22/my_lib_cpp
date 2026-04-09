@@ -53,7 +53,7 @@ class Cli;
 /* default hooks */
 void defaultPromptHook(const utils::cli::Cli& cli, std::uint8_t code);
 utils::cli::ParsedData defaultParserHook(const std::string& input, bool trim, bool logic, bool parse);
-char defaultGetCHook(bool echo);
+char defaultGetCHook();
 
 //----------------------------------------------------------------//
 /* CLASS */
@@ -130,7 +130,7 @@ class Cli {
         void resetGetCHook() {this->_getcHook = defaultGetCHook;};
         void setPromptHook(const std::function<void(const utils::cli::Cli&, std::uint8_t)>& hook) {this->_promptHook = hook;}; // Called to print the prompt
         void setParserHook(const std::function<ParsedData(const std::string&, bool, bool, bool)>& hook) {this->_parserHook = hook;}; // Called to parse the input
-        void setGetCHook(const std::function<char(bool)>& hook) {this->_getcHook = hook;}; // Called to print the prompt
+        void setGetCHook(const std::function<char()>& hook) {this->_getcHook = hook;}; // Called to print the prompt
 
         /* getter */
         std::uint32_t getFlags() const {return this->_flags;};

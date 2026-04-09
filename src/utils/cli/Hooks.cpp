@@ -45,6 +45,5 @@ hot nodiscard char utils::cli::defaultGetCHook()
     char c = '\0';
     if (read(STDIN_FILENO, &c, 1) != 1)
         throw std::runtime_error(strerror(errno));
-    if (echo) std::cout << c;
     return c;
 }
