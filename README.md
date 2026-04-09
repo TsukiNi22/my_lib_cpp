@@ -128,7 +128,7 @@ Vector3<T>
 
 ## Algorithms
 > [!NOTE]
-> Different algorithms such as the c2dmp-hsm ((here)[https://github.com/TsukiNi22/c2dmp-hsm])
+> Different algorithms such as the c2dmp-hsm ([here](https://github.com/TsukiNi22/c2dmp-hsm))
 
 Included from:
 ```cpp
