@@ -348,8 +348,8 @@ hot utils::cli::ParsedData utils::cli::Cli::parse(const std::string& input)
 hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
 {
     this->execMiddlewares.callBefore(parsedInput);
-    std::unordered_map<std::string, std::tuple<std::function<void(const std::vector<std::string>&)>, std::int16_t, std::int16_t>>::iterator itParsed;
-    std::unordered_map<std::string, std::function<void(const std::string&)>>::iterator itRaw;
+    std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>>::iterator itParsed;
+    std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>>::iterator itRaw;
     const char* lastExceptionInfo = nullptr;
     std::uint8_t status = 0;
 
@@ -366,14 +366,14 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
             if (this->_flags & utils::cli::Flag::PARSED && itParsed != this->_parsedCommands.end()) {
                 this->commandMiddlewares.callBefore(command.front());
                 if (std::get<0>(itParsed->second)) // Check the command existense
-                    std::get<0>(itParsed->second)(std::vector<std::string>(command.begin() + 1, command.end() - 1));
+                    std::get<0>(itParsed->second)(*this, std::vector<std::string>(command.begin() + 1, command.end() - 1));
                 else
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
                 this->commandMiddlewares.callAfter(command.front());
             } else if (!(this->_flags & utils::cli::Flag::PARSED) && itRaw != this->_rawCommands.end()) {
                 this->commandMiddlewares.callBefore(command.front());
                 if (itRaw->second) // Check the command existense
-                    (itRaw->second)(command[1]);
+                    (itRaw->second)(*this, command[1]);
                 else
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
                 this->commandMiddlewares.callAfter(command.front());
@@ -413,4 +413,28 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
         throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, std::string("Callback exception: ") + lastExceptionInfo);
 
     this->execMiddlewares.callAfter(parsedInput);
+}
+
+std::string utils::cli::Cli::strcode(std::uint8_t code) const
+{
+    switch (code) {
+        case 0: return "OK";
+        case 1: return "Internal error";
+        case 2: return "Hook internal error or missing";
+        case 3: return "Middleware internal error";
+        case 34: return "There is allways a r34";
+        case 42: return "case 42";
+        case 124: return "Not enough arguments";
+        case 125: return "Too many arguments";
+        case 126: return "Unclosed escape sequence";
+        case 127: return "Empty input";
+        case 128: return "Unknow command";
+        case 129: return "Command not implemented";
+        case 130: return "Callback exception";
+        case 255: return "Undefined error";
+        default: return "No errors are associated with this code";
+    }
+
+    // Uuhhhhh?????????????
+    return "Some dark shit is happening here";
 }

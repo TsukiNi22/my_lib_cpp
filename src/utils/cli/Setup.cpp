@@ -21,6 +21,8 @@ File Description:
 #include "utils/attribute/Attribute.hpp"
 #include "utils/exception/ExceptionDefine.hpp"
 #include "utils/exception/basic/NoneException.hpp"
+#include "utils/write/ANSI.hpp"
+#include "utils/write/format.hpp"
 #include "utils/cli/Cli.hpp"
 #include <termios.h>
 #include <functional>
@@ -28,6 +30,7 @@ File Description:
 #include <cstdint>
 #include <csignal>
 #include <vector>
+#include <format>
 #include <string>
 #include <tuple>
 
@@ -70,17 +73,28 @@ static void help()
     << " help\t- Display commands help" << std::endl
     << " bye\t- Exit the cli" << std::endl
     << " quit\t- Exit the cli" << std::endl
-    << " exit\t- Exit the cli" << std::endl;
+    << " exit\t- Exit the cli" << std::endl
+    << " ?\t- Display the precedent return code" << std::endl;
 }
-void help(unused const std::string&) {help();}
-void help(unused const std::vector<std::string>&) {help();}
 
 static void exit()
 {
     throw utils::exception::NoneException(utils::exception::Code::Exit);
 }
-void bye() {exit();}
-void quit() {exit();}
+static void bye() {exit();}
+static void quit() {exit();}
+
+static void displayCode(const utils::cli::Cli& cli)
+{
+    std::uint8_t code = cli.getCode();
+    std::cout << utils::write::strong();
+    if (code != 0) std::cout << utils::write::color_rgb(255, 0, 0) << "$";
+    else std::cout << utils::write::color_rgb(0, 255, 0) << "$";
+    std::cout << utils::write::format(std::format("<><strong>[{:03}]<>", code));
+    std::cout << utils::write::format("<strong>➤ <>");
+    std::cout << utils::write::color_rgb(0, 200, 200) << cli.strcode(code) << utils::write::reset();
+    std::cout << std::endl << std::flush;
+}
 
 void utils::cli::Cli::resetCommands()
 {
@@ -88,18 +102,20 @@ void utils::cli::Cli::resetCommands()
     this->_rawCommands.clear();
 
     // Parsed commands
-    using FnVec = std::function<void(const std::vector<std::string>&)>;
-    this->_parsedCommands["help"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){help();}), 0, 0);
-    this->_parsedCommands["bye"]  = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){bye();}), 0, 0);
-    this->_parsedCommands["quit"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){quit();}), 0, 0);
-    this->_parsedCommands["exit"] = std::make_tuple(FnVec([](unused const std::vector<std::string>& inputs){exit();}), 0, 0);
+    using FnVec = std::function<void(const utils::cli::Cli& cli, const std::vector<std::string>&)>;
+    this->_parsedCommands["help"] = std::make_tuple(FnVec([](unused const utils::cli::Cli& cli, unused const std::vector<std::string>& inputs){help();}), 0, 0);
+    this->_parsedCommands["bye"]  = std::make_tuple(FnVec([](unused const utils::cli::Cli& cli, unused const std::vector<std::string>& inputs){bye();}), 0, 0);
+    this->_parsedCommands["quit"] = std::make_tuple(FnVec([](unused const utils::cli::Cli& cli, unused const std::vector<std::string>& inputs){quit();}), 0, 0);
+    this->_parsedCommands["exit"] = std::make_tuple(FnVec([](unused const utils::cli::Cli& cli, unused const std::vector<std::string>& inputs){exit();}), 0, 0);
+    this->_parsedCommands["?"] = std::make_tuple(FnVec([](const utils::cli::Cli& cli, unused const std::vector<std::string>& inputs){displayCode(cli);}), 0, 0);
 
     // Raw commands
-    using FnStr = std::function<void(const std::string&)>;
-    this->_rawCommands["help"] = FnStr([](unused const std::string& input){help();});
-    this->_rawCommands["bye"]  = FnStr([](unused const std::string& input){bye();});
-    this->_rawCommands["quit"] = FnStr([](unused const std::string& input){quit();});
-    this->_rawCommands["exit"] = FnStr([](unused const std::string& input){exit();});
+    using FnStr = std::function<void(const utils::cli::Cli& cli, const std::string&)>;
+    this->_rawCommands["help"] = FnStr([](unused const utils::cli::Cli& cli, unused const std::string& input){help();});
+    this->_rawCommands["bye"]  = FnStr([](unused const utils::cli::Cli& cli, unused const std::string& input){bye();});
+    this->_rawCommands["quit"] = FnStr([](unused const utils::cli::Cli& cli, unused const std::string& input){quit();});
+    this->_rawCommands["exit"] = FnStr([](unused const utils::cli::Cli& cli, unused const std::string& input){exit();});
+    this->_rawCommands["?"] = FnStr([](const utils::cli::Cli& cli, unused const std::string& input){displayCode(cli);});
 }
 
 void utils::cli::Cli::resetHooks()

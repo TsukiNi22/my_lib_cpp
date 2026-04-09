@@ -71,8 +71,8 @@ class Cli {
         std::queue<std::string> _initInput; // Only init
 
         /* storage */
-        std::unordered_map<std::string, std::tuple<std::function<void(const std::vector<std::string>&)>, std::int16_t, std::int16_t>> _parsedCommands;
-        std::unordered_map<std::string, std::function<void(const std::string&)>> _rawCommands;
+        std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>> _parsedCommands;
+        std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>> _rawCommands;
         std::vector<std::string> _history;
 
         /* hooks */
@@ -114,6 +114,9 @@ class Cli {
         /* middlewares */
         void resetMiddlewares(); // Reset all middlewares
 
+        /* getter */
+        std::string strcode(std::uint8_t code) const;
+
         // ------------ Function ---------- //
         void setInputDelimitor(char c) {this->_inputDelimitor = c;};
 
@@ -124,8 +127,8 @@ class Cli {
         void setFlags(std::uint32_t flags) {this->_flags = flags;};
 
         /* commands */
-        void setCommands(const std::unordered_map<std::string, std::tuple<std::function<void(const std::vector<std::string>&)>, std::int16_t, std::int16_t>>& commands) {this->_parsedCommands = commands;}; // Set commands with min & max argument number (-1 = no limit)
-        void setCommands(const std::unordered_map<std::string, std::function<void(const std::string&)>>& commands) {this->_rawCommands = commands;};
+        void setCommands(const std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>>& commands) {this->_parsedCommands = commands;}; // Set commands with min & max argument number (-1 = no limit)
+        void setCommands(const std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>>& commands) {this->_rawCommands = commands;};
 
         /* hooks */
         void resetPromptHook() {this->_promptHook = defaultPromptHook;};
@@ -136,9 +139,9 @@ class Cli {
         void setGetCHook(const std::function<char()>& hook) {this->_getcHook = hook;}; // Called to print the prompt
 
         /* getter */
+        std::uint8_t getCode() const {return this->_code;};
         std::uint32_t getFlags() const {return this->_flags;};
         char getInputDelimitor() const {return this->_inputDelimitor;};
-        std::uint8_t getCode() const {return this->_code;};
         std::vector<std::string> getHistory() const {return this->_history;};
 
         // ------------ Operator ---------- //

@@ -86,6 +86,9 @@ hot utils::cli::ParsedData utils::cli::defaultParserHook(const std::string& inpu
     std::vector<std::string> data;
     std::string command;
 
+    // Empty input
+    if (input.empty()) return parsedInput;
+
     // Get the commands separated by '&&', '||' and ';'
     if (logic) commands = splitCommands(trimString(input));
     else commands = {input};
