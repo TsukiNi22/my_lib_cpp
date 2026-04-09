@@ -20,8 +20,6 @@ File Description:
 #ifndef OPERATIONCONCEPTS_H
     #define OPERATIONCONCEPTS_H
 
-#include <type_traits>
-
 namespace utils::concepts { // namespace start
 //----------------------------------------------------------------//
 /* CONCEPTS */

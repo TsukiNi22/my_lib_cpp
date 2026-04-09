@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 03/03/2026 by @author Tsukini
+##  @date 08/04/2026 by @author Tsukini
 
 File Name:
 ##  @file ANSI.cpp
@@ -80,9 +80,9 @@ utils::write::MouseEvent utils::write::readMouseEvent()
 
     // Check the buffer
     if (buffer.size() < 6)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, "Mouse sequence too short");
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, "Mouse sequence too short");
     if (buffer.find("[M") == std::string::npos)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, "Invalid classic mouse format");
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, "Invalid classic mouse format");
 
     // Get the start of the data
     auto start = buffer.find('M');
@@ -104,7 +104,7 @@ utils::write::MouseEvent utils::write::readMouseEvent()
             throw std::runtime_error("Missing Y field");
         event.y = std::stoul(token);
     } catch (const std::exception& e) {
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, std::format("{}: {}", "Failed parsing classic mouse event", e.what()));
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, std::format("{}: {}", "Failed parsing classic mouse event", e.what()));
     }
 
     // Convert the button value
@@ -136,11 +136,11 @@ utils::write::AdvancedMouseEvent utils::write::readAdvancedMouseEvent()
 
     // Check the buffer
     if (buffer.empty())
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, "No mouse sequence received");
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, "No mouse sequence received");
     if (buffer.size() < 8)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, "Mouse sequence too short");
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, "Mouse sequence too short");
     if (buffer.find("[<") == std::string::npos)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, "Invalid SGR mouse format");
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, "Invalid SGR mouse format");
 
     // Button status
     event.pressed = (buffer.back() == 'M');
@@ -165,7 +165,7 @@ utils::write::AdvancedMouseEvent utils::write::readAdvancedMouseEvent()
             throw std::runtime_error("Missing Y field");
         event.y = std::stoul(token);
     } catch (const std::exception& e) {
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::MouseEvent, std::format("{}: {}", "Failed parsing classic mouse event", e.what()));
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::ANSIMouseEvent, std::format("{}: {}", "Failed parsing classic mouse event", e.what()));
     }
 
     // Convert the button value

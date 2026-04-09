@@ -36,6 +36,11 @@ set(SRC
     ## Write
     src/utils/write/ANSI.cpp
     src/utils/write/format.cpp
+
+    ## Cli
+    src/utils/cli/Cli.cpp
+    src/utils/cli/Setup.cpp
+    src/utils/cli/Hooks.cpp
 )
 add_library(${TARGET} STATIC ${SRC})
 #add_library(${TARGET} SHARED ${SRC})

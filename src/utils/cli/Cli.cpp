@@ -1,0 +1,344 @@
+/**************************************************************\
+
+ ██╗  ██╗ █████╗ ██████╗ ████████╗ █████╗ ███╗   ██╗██╗ █████╗ 
+ ╚██╗██╔╝██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗████╗  ██║██║██╔══██╗
+  ╚███╔╝ ███████║██████╔╝   ██║   ███████║██╔██╗ ██║██║███████║
+  ██╔██╗ ██╔══██║██╔══██╗   ██║   ██╔══██║██║╚██╗██║██║██╔══██║
+ ██╔╝ ██╗██║  ██║██║  ██║   ██║   ██║  ██║██║ ╚████║██║██║  ██║
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
+
+Edition:
+##  @date 09/04/2026 by @author Tsukini
+
+File Name:
+##  @file Cli.cpp
+
+File Description:
+##  You know, I don t think there are good or bad descriptions,
+##  for me, life is all about functions...
+\**************************************************************/
+
+#include "utils/attribute/Attribute.hpp"
+#include "utils/exception/ExceptionDefine.hpp"
+#include "utils/exception/basic/NoneException.hpp"
+#include "utils/exception/custom/CustomException.hpp"
+#include "utils/algorithms/c2dmp-hsm/c2dmp-hsm.hpp"
+#include "utils/write/ANSI.hpp"
+#include "utils/cli/Cli.hpp"
+#include "utils/cli/Flags.hpp"
+#include <exception>
+#include <algorithm>
+#include <cstddef>
+#include <vector>
+#include <string>
+
+static std::string trim(const std::string& s)
+{
+    std::size_t start = s.find_first_not_of(" ");
+    if (start == std::string::npos) return "";
+    std::size_t end = s.find_last_not_of(" ");
+    return s.substr(start, end - start + 1);
+}
+
+static void deleteChars(std::size_t n)
+{
+    for (std::size_t i = 0; i < n; ++i)
+        std::cout << "\b \b";
+    std::cout << std::flush;
+}
+
+void utils::cli::Cli::start()
+{
+    try {this->cliMiddlewares.callBefore();}
+    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+    std::string input;
+
+    // Main loop
+    try {
+        while (true) {
+            // Display prompt
+            if (this->_flags & utils::cli::Flag::PROMPT) {
+                try {
+                    this->prompt();
+                } catch (const utils::exception::CustomException& e) {
+                    utils::exception::Code code = e.getCode();
+                    if (code == utils::exception::Code::CliHook) this->_code = 2;
+                    else unlikely {this->_code = 255;}
+                    try {this->errorMiddlewares.callBefore(this->_code);}
+                    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                    if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
+                    else std::cout << e.info() << std::endl;
+                    try {this->errorMiddlewares.callAfter(this->_code);}
+                    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                    continue;
+                }
+            }
+
+            // Get input & Check if it's empty
+            try {
+                input = this->getInput();
+                this->_history.push_back(input);
+            } catch (const utils::exception::CustomException& e) {
+                utils::exception::Code code = e.getCode();
+                if (code == utils::exception::Code::CliInternal) this->_code = 1;
+                else if (code == utils::exception::Code::CliHook) this->_code = 2;
+                else if (code == utils::exception::Code::CliMiddleware) this->_code = 3;
+                else unlikely {this->_code = 255;}
+                try {this->errorMiddlewares.callBefore(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
+                else std::cout << e.info() << std::endl;
+                try {this->errorMiddlewares.callAfter(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                continue;
+            }
+            if (!(this->_flags & utils::cli::Flag::EMPTY_INPUT) && input.empty()) {
+                this->_code = 127;
+                try {this->errorMiddlewares.callBefore(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                std::cout << "Empty input" << std::endl;
+                try {this->errorMiddlewares.callAfter(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                continue;
+            }
+
+            // Parse & Execute input
+            try {
+                this->exec(this->parse(input));
+            } catch (const utils::exception::CustomException& e) {
+                utils::exception::Code code = e.getCode();
+                if (code == utils::exception::Code::CliHook) this->_code = 2;
+                else if (code == utils::exception::Code::CliMiddleware) this->_code = 3;
+                else if (code == utils::exception::Code::CliParser) {
+                    std::string info = e.info();
+                    if (info == "Not enough arguments") this->_code = 124;
+                    else if (info == "Too many arguments") this->_code = 125;
+                    else if (info == "Unclosed escape sequence") this->_code = 126;
+                } else if (code == utils::exception::Code::CliExecution) {
+                    std::string info = e.info();
+                    if (info == "Unknow command") this->_code = 128;
+                    else if (info == "Command not implemented") this->_code = 129;
+                    else if (info == "Callback exception") {
+                        if (!(this->_flags & utils::cli::Flag::CATCH)) throw;
+                        this->_code = 130;
+                    }
+                } else unlikely {this->_code = 255;}
+                try {this->errorMiddlewares.callBefore(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
+                else std::cout << e.info() << std::endl;
+                try {this->errorMiddlewares.callAfter(this->_code);}
+                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                continue;
+            }
+        }
+    } catch (const utils::exception::NoneException& e) { // Catch exit throw
+        if (e.getCode() != utils::exception::Code::Exit) throw;
+    }
+
+    try {this->cliMiddlewares.callAfter();}
+    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+}
+
+void utils::cli::Cli::start(const std::string& input)
+{
+    this->_initInput.push(input);
+    this->start();
+}
+
+void utils::cli::Cli::start(const std::vector<std::string>& inputs)
+{
+    for (const std::string& input: inputs)
+        this->_initInput.push(input);
+    this->start();
+}
+
+hot void utils::cli::Cli::prompt()
+{
+    this->promptMiddlewares.callBefore();
+
+    // Call the hook
+    if (this->_promptHook) likely {
+        try {
+            this->_promptHook(*this, this->_code);
+        } catch (const std::exception& e) {
+            throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
+        }
+    } else unlikely {
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, "Missing hook for prompting");
+    }
+
+    this->promptMiddlewares.callAfter();
+}
+
+hot nodiscard std::string utils::cli::Cli::getInput()
+{
+    bool echo = !(this->_flags & utils::cli::Flag:: NOECHO);
+    std::size_t indexBuffer = 0, indexHistory = this->_history.size();
+    float min_dist = 0.0f, dist = 0.0f;
+    bool escape = false, first = true, onInput = false;
+    std::string input, inputBuff, hint;
+    char c = '\0';
+
+    // Initial inputs
+    if (this->_initInput.size() > 0) {
+        input = this->_initInput.front();
+        this->_initInput.pop();
+        return input;
+    }
+
+    // Loop to get full input
+    while (true) {
+
+        // Get the char
+        if (this->_getcHook) likely {
+            try {
+                this->inputMiddlewares.callBefore();
+                c = this->_getcHook();
+                this->inputMiddlewares.callAfter(c);
+            } catch (const std::exception& e) {
+                throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
+            }
+        } else unlikely {
+            throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, "Missing hook for char getter");
+        }
+
+        // Ctrl+D handling
+        if (c == 4) {
+            std::cout << std::endl << "Detected Ctrl+D, exiting..." << std::endl;
+            throw utils::exception::NoneException(utils::exception::Code::Exit);
+        }
+
+        // Auto completion
+        else if (this->_flags & utils::cli::Flag::AUTO_COMPLETION && c == '\t' && trim(input).find(" ", 0) == std::string::npos) {
+            if (echo) deleteChars(input.size());
+            // For each command find the most appropriate one
+            min_dist = 0.0f;
+            dist = 0.0f;
+            first = true;
+            hint.clear();
+            if (this->_flags & utils::cli::Flag::PARSED) {
+                for (const auto& [cmd, tup] : this->_parsedCommands) {
+                    dist = utils::algorithms::c2dmp::c2dmp<3>(input, cmd);
+                    if (first || dist < min_dist) {
+                        min_dist = dist;
+                        hint = cmd;
+                        first = false;
+                    }
+                }
+            } else {
+                for (const auto& [cmd, fn] : this->_rawCommands) {
+                    dist = utils::algorithms::c2dmp::c2dmp<3>(input, cmd);
+                    if (first || dist < min_dist) {
+                        min_dist = dist;
+                        hint = cmd;
+                        first = false;
+                    }
+                }
+            }
+            input = hint;
+            if (echo) std::cout << input;
+        }
+
+        // Arrow left, write
+        else if (this->_flags & utils::cli::Flag::ARROW && escape && input.back() == '[' && (c == 'C' || c == 'D')) {
+            if (echo) deleteChars(1);
+            input.pop_back();
+            if (c == 'C' && indexBuffer <= input.size()) { // right
+                ++indexBuffer;
+                std::cout << utils::write::right(1);
+            }
+            else if (c == 'D' && indexBuffer > 0) { // left
+                --indexBuffer;
+                std::cout << utils::write::left(1);
+            }
+        }
+
+        // History with arrow up, down
+        else if (this->_flags & utils::cli::Flag::HISTORY && escape && input.back() == '[' && (c == 'A' || c == 'B')) {
+            if (echo) deleteChars(input.size());
+            input.pop_back();
+            onInput = (indexHistory == this->_history.size());
+            if (c == 'A') { // Up
+                if (indexHistory == 0) indexHistory = this->_history.size();
+                else --indexHistory;
+            }
+            else if (c == 'B') { // Down
+                if (indexHistory >= this->_history.size()) indexHistory = 0;
+                else ++indexHistory;
+            }
+            if (indexHistory == this->_history.size()) {
+                if (!onInput) std::swap(input, inputBuff);
+            } else if (onInput) {
+                inputBuff = this->_history[indexHistory];
+                std::swap(inputBuff, input);
+            } else input = this->_history[indexHistory];
+            if (echo) std::cout << input;
+        }
+
+        // Delete char
+        else if (c == 127 || c == '\b') {
+            if (!input.empty()) {
+                if (echo) deleteChars(1);
+                input.erase(--indexBuffer, 1);
+            }
+        }
+
+        // End of input
+        else if (c == this->_inputDelimitor) {
+            break;
+        }
+
+        // Add char to the input
+        else if (std::isprint(c)) likely {
+            if (echo) deleteChars(1);
+            input.insert(indexBuffer++, 1, c);
+            if (echo) std::cout << input;
+        }
+
+        // Detect escape sequence
+        if (c == '\x1b') {
+            escape = true;
+        } else if (c != '[') {
+            escape = false;
+        }
+
+        std::cout << std::flush;
+    }
+
+    if (this->_flags & utils::cli::Flag::TRIM) return trim(input);
+    else return input;
+}
+
+hot utils::cli::ParsedData utils::cli::Cli::parse(const std::string& input)
+{
+    this->parserMiddlewares.callBefore(input);
+    utils::cli::ParsedData parsedInput;
+
+    // Call the hook
+    if (this->_parserHook) likely {
+        try {
+            parsedInput = this->_parserHook(input,
+                this->_flags & utils::cli::Flag::TRIM,
+                this->_flags & utils::cli::Flag::LOGIC,
+                this->_flags & utils::cli::Flag::PARSED
+            );
+        } catch (const std::exception& e) {
+            throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
+        }
+    } else unlikely {
+        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, "Missing hook for parsing");
+    }
+
+    this->parserMiddlewares.callAfter(parsedInput);
+    return parsedInput;
+}
+
+hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
+{
+    this->execMiddlewares.callBefore(parsedInput);
+
+    /* ... */
+
+    this->execMiddlewares.callAfter(parsedInput);
+}

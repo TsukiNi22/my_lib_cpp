@@ -31,7 +31,14 @@ enum class Code: std::size_t {
     Undefined = 0,
     VectorInvalidIndex,
     ExceptionCodeRestriction,
-    MouseEvent,
+    Exit,
+    ANSIMouseEvent,
+    CliInternal,
+    CliHook,
+    CliMiddleware,
+    CliParser,
+    CliExecution,
+    CliUndefined,
     CODE_SENTINEL // sentinel used for verification
 };
 
@@ -40,7 +47,14 @@ constexpr inline const char *Message[] = {
     /* Undefined */ "An undefined error has occured",
     /* VectorInvalidIndex */ "Invalid index on a vector",
     /* ExceptionCodeRestriction */ "Error during the setup of an exception",
-    /* MouseEvent */ "Error during the read of the mouse event",
+    /* Exit */ "Exit",
+    /* ANSIMouseEvent */ "Error during the read of the mouse event",
+    /* CliInternal */ "Internal error from the cli",
+    /* CliHook */ "Error during a hook call",
+    /* CliMiddleware */ "Error during a middleware call",
+    /* CliParser */ "Error during the parsing",
+    /* CliExecution */ "Error during the command execution",
+    /* CliUndefined */ "An undefined error has append",
 };
 
 /* Potential default info: nullptr same as "[None]" */
@@ -48,7 +62,14 @@ constexpr inline const char *Info[] = {
     /* Undefined */ nullptr,
     /* VectorInvalidIndex */ "Can't retrieve the value, the VectorX dosen't have this index",
     /* ExceptionCodeRestriction */ "Restriction trigerred on a code & type combination",
-    /* MouseEvent */ nullptr,
+    /* Exit */ "Exit",
+    /* ANSIMouseEvent */ nullptr,
+    /* CliInternal */ nullptr,
+    /* CliHook */ nullptr,
+    /* CliMiddleware */ nullptr,
+    /* CliParser */ nullptr,
+    /* CliExecution */ nullptr,
+    /* CliUndefined */ nullptr,
 };
 
 /* Potential restriction on exception code */
@@ -61,7 +82,14 @@ constexpr inline const std::uint8_t Restriction[] = {
     /* Undefined */ 0b0000, // allow: All
     /* VectorInvalidIndex */ 0b1110, // allow: Fatal, Error, Warning
     /* ExceptionCodeRestriction */ 0b0110, // allow: Fatal, Error
-    /* MouseEvent */ 0b0110, // allow: Fatal, Error
+    /* Exit */ 0b0001, // allow: None
+    /* ANSIMouseEvent */ 0b0110, // allow: Fatal, Error
+    /* CliInternal */ 0b0110, // allow: Fatal, Error
+    /* CliHook */ 0b1110, // allow: Fatal, Error, Warning
+    /* CliMiddleware */ 0b1110, // allow: Fatal, Error, Warning
+    /* CliParser */ 0b0000, // allow: All
+    /* CliExecution */ 0b0110, // allow: Fatal, Error
+    /* CliUndefined */ 0b0110, // allow: Fatal, Error
 };
 
 // Check at the compile time the correspondece between the message & code

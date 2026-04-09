@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 08/04/2026 by @author Tsukini
+##  @date 09/04/2026 by @author Tsukini
 
 File Name:
 ##  @file utils.hpp
@@ -15,14 +15,15 @@ File Description:
 /* Activate all include */
 #ifdef _Utils
     #define _Handling
-    #define _Tool
     #define _Attribute
+    #define _Tool
 #endif
 
 /* Activate all handling include */
 #ifdef _Handling
     #define _Exception
     #define _Write
+    #define _Cli
 #endif
 
 /* Activate all tool include */
@@ -55,6 +56,14 @@ File Description:
     #include "utils/write/Style.hpp"    // utils::write::Style, utils::write::ResetStyle
     #include "utils/write/ANSI.hpp"     // different inline function for ANSI escape sequences
     #include "utils/write/format.hpp"   // utils::write::format
+#endif
+
+/* Cli */
+#ifdef _Cli
+    // -> Handling of a customizable command line interface
+    #include "utils/cli/Cli.hpp"            // utils::cli::Cli, utils::cli::ParsedData
+    #include "utils/cli/Flags.hpp"          // utils::cli::Flag, utils::cli::Flags
+    #include "utils/cli/Middlewares.hpp"    // utils::cli::Middlewares
 #endif
 
 /* Macro */
