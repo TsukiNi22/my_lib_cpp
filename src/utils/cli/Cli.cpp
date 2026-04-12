@@ -109,6 +109,7 @@ void utils::cli::Cli::start()
             // Parse & Execute input
             try {
                 this->exec(this->parse(input));
+                this->_code = 0;
             } catch (const utils::exception::CustomException& e) {
                 utils::exception::Code code = e.getCode();
                 if (code == utils::exception::Code::CliHook) this->_code = 2;
@@ -348,7 +349,7 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
     this->execMiddlewares.callBefore(parsedInput);
     std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>>::iterator itParsed;
     std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>>::iterator itRaw;
-    const char* lastExceptionInfo = nullptr;
+    std::string lastExceptionInfo;
     std::uint8_t status = 0;
 
     // For each commands
@@ -395,7 +396,7 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
             lastExceptionInfo = e.info();
             if (!(this->_flags & utils::cli::Flag::CATCH)) throw;
             if (e.getCode() == utils::exception::Code::CliParser) status = 1;
-            else if (std::strcmp(lastExceptionInfo, "Unknow command") == 0 || std::strcmp(lastExceptionInfo, "Command not implemented") == 0) status = 2;
+            else if (lastExceptionInfo == "Unknow command" || lastExceptionInfo == "Command not implemented") status = 2;
             else status = 3;
         } catch (const utils::exception::NoneException& e) {
             throw;
@@ -406,8 +407,9 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
             status = 3;
         }
 
-        // Display error
+        // Error handling
         if (status != 0) {
+            // Display error
             switch (status) {
                 case 1: std::cout << lastExceptionInfo << std::endl; break; // Parser
                 case 2: std::cout << lastExceptionInfo << std::endl; break; // Execution
@@ -415,7 +417,16 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
                 default: // Unknow
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Callback exception: can't determine the error");
             }
-        }
+
+            // Update internal code
+            if (lastExceptionInfo == "Not enough arguments") this->_code = 124;
+            else if (lastExceptionInfo == "Too many arguments") this->_code = 125;
+            else if (lastExceptionInfo == "Unclosed escape sequence") this->_code = 126;
+            else if (lastExceptionInfo == "Unknow command") this->_code = 128;
+            else if (lastExceptionInfo == "Command not implemented") this->_code = 129;
+            else if (lastExceptionInfo.starts_with("Callback exception: ")) this->_code = 130;
+            else unlikely {this->_code = 255;}
+        } else this->_code = 0;
 
         // Check the logic
         if (command.back() == "&&") {
