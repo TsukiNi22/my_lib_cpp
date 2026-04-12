@@ -109,7 +109,6 @@ void utils::cli::Cli::start()
             // Parse & Execute input
             try {
                 this->exec(this->parse(input));
-                this->_code = 0;
             } catch (const utils::exception::CustomException& e) {
                 utils::exception::Code code = e.getCode();
                 if (code == utils::exception::Code::CliHook) this->_code = 2;
@@ -176,14 +175,34 @@ hot void utils::cli::Cli::prompt()
     this->promptMiddlewares.callAfter();
 }
 
+template<std::size_t PREFIX_DEPTH>
+static std::string getHint(const std::vector<std::string>& list, const std::string& s)
+{
+    float min_dist = 0.0f, dist = 0.0f;
+    bool first = true;
+    std::string hint;
+
+    // Check for each
+    for (const std::string& actual: list) {
+        dist = utils::algorithms::c2dmp::c2dmp<PREFIX_DEPTH>(s, actual);
+        if (first || dist < min_dist) {
+            min_dist = dist;
+            hint = actual;
+            first = false;
+        }
+    }
+
+    return hint;
+}
+
 hot nodiscard std::string utils::cli::Cli::getInput()
 {
+    std::vector<std::string> commands;
     bool echo = !(this->_flags & utils::cli::Flag:: NOECHO);
     std::size_t indexBuffer = 0, indexHistory = this->_history.size();
     std::size_t lastInputSize = 0, lastIndexBuffer = indexBuffer;
-    float min_dist = 0.0f, dist = 0.0f;
-    bool escape = false, first = true, onInput = false;
-    std::string input, inputBuff, hint;
+    bool escape = false, onInput = false;
+    std::string input, inputBuff;
     char c = '\0';
 
     // Initial inputs
@@ -216,31 +235,18 @@ hot nodiscard std::string utils::cli::Cli::getInput()
 
         // Auto completion
         else if (this->_flags & utils::cli::Flag::AUTO_COMPLETION && c == '\t' && trim(input).find(" ", 0) == std::string::npos) {
-            // For each command find the most appropriate one
-            min_dist = 0.0f;
-            dist = 0.0f;
-            first = true;
-            hint.clear();
+            // Setup the commands
+            commands.clear();
             if (this->_flags & utils::cli::Flag::PARSED) {
-                for (const auto& [cmd, tup] : this->_parsedCommands) {
-                    dist = utils::algorithms::c2dmp::c2dmp<3>(input, cmd);
-                    if (first || dist < min_dist) {
-                        min_dist = dist;
-                        hint = cmd;
-                        first = false;
-                    }
-                }
+                for (const auto& [cmd, tup] : this->_parsedCommands)
+                    commands.push_back(cmd);
             } else {
-                for (const auto& [cmd, fn] : this->_rawCommands) {
-                    dist = utils::algorithms::c2dmp::c2dmp<3>(input, cmd);
-                    if (first || dist < min_dist) {
-                        min_dist = dist;
-                        hint = cmd;
-                        first = false;
-                    }
-                }
+                for (const auto& [cmd, fn] : this->_rawCommands)
+                    commands.push_back(cmd);
             }
-            input = hint;
+
+            // Get the hint
+            input = getHint<2>(commands, input);
             indexBuffer = input.size();
         }
 
@@ -350,6 +356,7 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
     std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>>::iterator itParsed;
     std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>>::iterator itRaw;
     std::string lastExceptionInfo;
+    std::vector<std::string> commands;
     std::uint8_t status = 0;
 
     // For each commands
@@ -390,7 +397,21 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
 
             // Error
             else {
-                throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Unknow command");
+                if (this->_flags & utils::cli::Flag::HINT) {
+                    commands.clear();
+                    if (this->_flags & utils::cli::Flag::PARSED) {
+                        for (const auto& [cmd, tup] : this->_parsedCommands)
+                            commands.push_back(cmd);
+                    } else {
+                        for (const auto& [cmd, fn] : this->_rawCommands)
+                            commands.push_back(cmd);
+                    }
+                    std::cout << "Did you mean '" << getHint<3>(commands, command.front()) << "'?" << std::endl;
+                    status = 4;
+                    lastExceptionInfo = "Unknow command";
+                } else {
+                    throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Unknow command");
+                }
             }
         } catch (const utils::exception::CustomException& e) {
             lastExceptionInfo = e.info();
@@ -414,6 +435,7 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
                 case 1: std::cout << lastExceptionInfo << std::endl; break; // Parser
                 case 2: std::cout << lastExceptionInfo << std::endl; break; // Execution
                 case 3: std::cout << "Callback exception: " << lastExceptionInfo << std::endl; break; // Other
+                case 4: break; // For error with no display
                 default: // Unknow
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Callback exception: can't determine the error");
             }
