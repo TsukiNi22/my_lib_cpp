@@ -41,7 +41,7 @@ static std::string trimString(const std::string& s)
 
 hot void utils::cli::defaultPromptHook(unused const utils::cli::Cli& cli, unused std::uint8_t code)
 {
-    std::cout << "> " << std::flush;
+    std::cout << "> TEEEEEEEEEEEEEEEEEEEEEESTTTTTTTTTTTTTTTTTIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIGGGGGGGGGGGGGGGGGGGG PROMPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPT >>> OK> " << std::flush;
 }
 
 static std::vector<std::string> splitCommands(const std::string& input)

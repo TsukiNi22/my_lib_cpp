@@ -25,10 +25,14 @@ File Description:
 #include "utils/write/ANSI.hpp"
 #include "utils/cli/Cli.hpp"
 #include "utils/cli/Flags.hpp"
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include <unordered_map>
 #include <functional>
 #include <exception>
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -36,7 +40,7 @@ File Description:
 #include <string>
 #include <tuple>
 
-static std::string trim(const std::string& s)
+static std::string trim(const std::string& s) noexcept
 {
     std::size_t start = s.find_first_not_of(" ");
     if (start == std::string::npos) return "";
@@ -44,17 +48,47 @@ static std::string trim(const std::string& s)
     return s.substr(start, end - start + 1);
 }
 
-static void deleteChars(std::size_t n)
+static std::pair<int, int> getTermSize()
 {
-    for (std::size_t i = 0; i < n; ++i)
-        std::cout << "\b \b";
-    std::cout << std::flush;
+    struct winsize ws;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1)
+        return {0, 0};
+    return {ws.ws_row, ws.ws_col};
+}
+
+static void resetCursorPos(bool erase, std::size_t promptSize, std::size_t index, bool relative = true)
+{
+    std::pair<int, int> termSize = getTermSize();
+
+    // Compute size of the displayed input (stopped at index)
+    std::size_t promptOffset = promptSize % termSize.second;
+    std::size_t total = promptOffset + index;
+    std::size_t rows = total / termSize.second;
+    std::size_t end = (rows > 0) ? total % termSize.second : 0;
+    std::size_t start = (rows > 0) ? termSize.second - promptOffset : index;
+
+    // Limits the rows movement
+    rows = std::min(static_cast<int>(rows), termSize.first);
+
+    // Replace the cursor
+    if (relative) { // Index position
+        for (std::size_t i = (end == 0); i < rows; ++i)
+            std::cout << (erase ? utils::write::line() : "") << utils::write::down(1) << utils::write::column(1);
+        if (((rows > 0) ? end : start) > 0) std::cout << utils::write::right(((rows > 0) ? end : start)) << (erase ? utils::write::line_start() : "");
+        //if (rows > 0) std::cout << utils::write::down(rows) << utils::write::column(1);
+        //if (!newLine && end == 0 && rows > 0) std::cout << utils::write::column(termSize.second) << std::endl << " \b"; // Force create a new line
+        //if (((rows > 0) ? end : start) > 0) std::cout << utils::write::right(((rows > 0) ? end : start));
+    } else { // End of the prompt
+        for (std::size_t i = 0; i < rows; ++i)
+            std::cout << (erase ? utils::write::line() : "") << utils::write::up(1) << utils::write::column(termSize.second);
+        if (start > 0) std::cout << utils::write::left(start - (rows > 0)) << (erase ? utils::write::line_end() : "");
+    }
 }
 
 void utils::cli::Cli::start()
 {
     try {this->cliMiddlewares.callBefore();}
-    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+    catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
     std::string input;
 
     // Main loop
@@ -69,11 +103,11 @@ void utils::cli::Cli::start()
                     if (code == utils::exception::Code::CliHook) this->_code = 2;
                     else unlikely {this->_code = 255;}
                     try {this->errorMiddlewares.callBefore(this->_code);}
-                    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
-                    if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
-                    else std::cout << e.info() << std::endl;
+                    catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
+                    if (this->_code <= 3 || this->_code == 255) std::cerr << e.what() << ": " << e.info() << std::endl;
+                    else std::cerr << e.info() << std::endl;
                     try {this->errorMiddlewares.callAfter(this->_code);}
-                    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                    catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
                     continue;
                 }
             }
@@ -89,20 +123,20 @@ void utils::cli::Cli::start()
                 else if (code == utils::exception::Code::CliMiddleware) this->_code = 3;
                 else unlikely {this->_code = 255;}
                 try {this->errorMiddlewares.callBefore(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
-                if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
-                else std::cout << e.info() << std::endl;
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
+                if (this->_code <= 3 || this->_code == 255) std::cerr << e.what() << ": " << e.info() << std::endl;
+                else std::cerr << e.info() << std::endl;
                 try {this->errorMiddlewares.callAfter(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
                 continue;
             }
             if (!(this->_flags & utils::cli::Flag::EMPTY_INPUT) && input.empty()) {
                 this->_code = 127;
                 try {this->errorMiddlewares.callBefore(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
-                std::cout << "Empty input" << std::endl;
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
+                std::cerr << "Empty input" << std::endl;
                 try {this->errorMiddlewares.callAfter(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
                 continue;
             }
 
@@ -128,11 +162,11 @@ void utils::cli::Cli::start()
                     }
                 } else unlikely {this->_code = 255;}
                 try {this->errorMiddlewares.callBefore(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
-                if (this->_code <= 3 || this->_code == 255) std::cout << e.what() << ": " << e.info() << std::endl;
-                else std::cout << e.info() << std::endl;
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
+                if (this->_code <= 3 || this->_code == 255) std::cerr << e.what() << ": " << e.info() << std::endl;
+                else std::cerr << e.info() << std::endl;
                 try {this->errorMiddlewares.callAfter(this->_code);}
-                catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+                catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
                 continue;
             }
         }
@@ -141,7 +175,7 @@ void utils::cli::Cli::start()
     }
 
     try {this->cliMiddlewares.callAfter();}
-    catch (const utils::exception::CustomException& e) {std::cout << e.what() << ": " << e.info() << std::endl;}
+    catch (const utils::exception::CustomException& e) {std::cerr << e.what() << ": " << e.info() << std::endl;}
 }
 
 void utils::cli::Cli::start(const std::string& input)
@@ -160,11 +194,19 @@ void utils::cli::Cli::start(const std::vector<std::string>& inputs)
 hot void utils::cli::Cli::prompt()
 {
     this->promptMiddlewares.callBefore();
+    std::streambuf* old = nullptr;
+    std::ostringstream prompt;
+    std::string promptStr;
 
     // Call the hook
     if (this->_promptHook) likely {
         try {
+            old = std::cout.rdbuf(prompt.rdbuf());
             this->_promptHook(*this, this->_code);
+            std::cout.rdbuf(old);
+            promptStr = prompt.str();
+            std::cout << promptStr << std::flush;
+            this->_promptSize = promptStr.size();
         } catch (const std::exception& e) {
             throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
         }
@@ -179,10 +221,12 @@ hot nodiscard std::string utils::cli::Cli::getInput()
 {
     bool echo = !(this->_flags & utils::cli::Flag:: NOECHO);
     std::size_t indexBuffer = 0, indexHistory = this->_history.size();
-    std::size_t lastInputSize = 0, lastIndexBuffer = indexBuffer;
+    std::size_t lastIndexBuffer = indexBuffer, allowedChar = 0;
+    std::size_t start = 0, len = 0;
     float min_dist = 0.0f, dist = 0.0f;
     bool escape = false, first = true, onInput = false;
-    std::string input, inputBuff, hint;
+    std::string input, inputBuff, hint , sub;
+    std::pair<int, int> termSize;
     char c = '\0';
 
     // Initial inputs
@@ -297,22 +341,33 @@ hot nodiscard std::string utils::cli::Cli::getInput()
             escape = false;
         }
 
+        // Refresh input display
         if (echo) {
-            // Reset the cursor place
-            if (lastInputSize - lastIndexBuffer > 0)
-                std::cout << utils::write::right(lastInputSize - lastIndexBuffer);
+            // Compute the input & cursor limits
+            termSize = getTermSize();
+            allowedChar = termSize.first * termSize.second;
+            len = std::min(allowedChar, input.size());
+            start = 0;
+            if (input.size() > len) {
+                if (indexBuffer > len / 2)
+                    start = indexBuffer - len / 2;
+                if (start + len > input.size())
+                    start = input.size() - len;
+            }
 
-            // Refresh input display
-            deleteChars(lastInputSize);
-            std::cout << input;
-            lastInputSize = input.size();
+            // Clamp the input
+            sub = input.substr(start, len);
+
+            // Rewrite
+            resetCursorPos(true, this->_promptSize, lastIndexBuffer - start, false);
+            std::cout << sub;
+            resetCursorPos(false, this->_promptSize, sub.size(), false);
+            resetCursorPos(false, this->_promptSize, indexBuffer - start, true);
+
+            // Update the var & term
             lastIndexBuffer = indexBuffer;
-
-            // Place the cursor
-            if (input.size() - indexBuffer > 0)
-                std::cout << utils::write::left(input.size() - indexBuffer);
+            std::cout << std::flush;
         }
-        std::cout << std::flush;
     }
 
     if (this->_flags & utils::cli::Flag::TRIM) return trim(input);

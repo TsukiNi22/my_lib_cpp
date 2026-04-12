@@ -29,6 +29,7 @@ File Description:
     #include <termios.h>        // termios
     #include <unordered_map>    // std::unordered_map
     #include <functional>       // std::function
+    #include <cstddef>          // std::size_t
     #include <cstdint>          // std::uint8_t, std::uint32_t
     #include <vector>           // std::vector
     #include <string>           // std::string
@@ -73,6 +74,7 @@ class Cli {
         std::unordered_map<std::string, std::tuple<std::function<void(const utils::cli::Cli&, const std::vector<std::string>&)>, std::int16_t, std::int16_t>> _parsedCommands;
         std::unordered_map<std::string, std::function<void(const utils::cli::Cli&, const std::string&)>> _rawCommands;
         std::vector<std::string> _history;
+        std::size_t _promptSize = 0;
 
         /* hooks */
         std::function<void(const utils::cli::Cli&, std::uint8_t)> _promptHook;
