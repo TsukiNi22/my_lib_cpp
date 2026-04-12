@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 08/04/2026 by @author Tsukini
+##  @date 11/04/2026 by @author Tsukini
 
 File Name:
 ##  @file ANSI.cpp
@@ -22,6 +22,7 @@ File Description:
 #include "utils/exception/custom/CustomException.hpp"
 #include "utils/write/ANSI.hpp"
 #include "utils/write/Style.hpp"
+#include <unistd.h>
 #include <initializer_list>
 #include <iostream>
 #include <sstream>
@@ -59,6 +60,28 @@ std::string utils::write::setStyle(std::initializer_list<utils::write::Style> st
     }
 
     return std::format("{}[{}m", static_cast<char>(utils::write::Char::ESC), s_styles);
+}
+
+// Report format -> "ESC[rows;colsR"
+std::pair<int, int> utils::write::readCursorPosition()
+{
+    char buffer[32] = {'\0'};
+    std::size_t i = 0;
+
+    // Get the awnser from the term
+    for (; i < sizeof(buffer) - 1; ++i) {
+        if (read(STDIN_FILENO, &buffer[i], 1) != 1)
+            break;
+        if (buffer[i] == 'R')
+            break;
+    }
+    buffer[i] = '\0';
+
+    // Get the values
+    int rows = 0, cols = 0;
+    if (sscanf(buffer, "\x1b[%d;%dR", &rows, &cols) != 2)
+        return {-1, -1};
+    return {rows, cols};
 }
 
 // Report format -> "ESC[Mb;x;y"
