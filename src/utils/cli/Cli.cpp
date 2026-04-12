@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 10/04/2026 by @author Tsukini
+##  @date 12/04/2026 by @author Tsukini
 
 File Name:
 ##  @file Cli.cpp
@@ -361,35 +361,60 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
             // Try to find the command
             itParsed = this->_parsedCommands.find(command.front());
             itRaw = this->_rawCommands.find(command.front());
+
+            // Parsed
             if (this->_flags & utils::cli::Flag::PARSED && itParsed != this->_parsedCommands.end()) {
                 this->commandMiddlewares.callBefore(command.front());
-                if (std::get<0>(itParsed->second)) // Check the command existense
+                if (std::get<0>(itParsed->second)) { // Check the command existense
+                    // Check commands arguments number
+                    if (std::get<1>(itParsed->second) == -1 || static_cast<std::int16_t>(command.size()) < std::get<1>(itParsed->second) + 1 + 2)
+                        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliParser, "Not enough arguments");
+                    else if (std::get<2>(itParsed->second) == -1 || static_cast<std::int16_t>(command.size()) > std::get<2>(itParsed->second) + 1 + 2)
+                        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliParser, "Too many arguments");
                     std::get<0>(itParsed->second)(*this, std::vector<std::string>(command.begin() + 1, command.end() - 1));
-                else
+                } else
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
                 this->commandMiddlewares.callAfter(command.front());
-            } else if (!(this->_flags & utils::cli::Flag::PARSED) && itRaw != this->_rawCommands.end()) {
+            }
+
+            // Raw
+            else if (!(this->_flags & utils::cli::Flag::PARSED) && itRaw != this->_rawCommands.end()) {
                 this->commandMiddlewares.callBefore(command.front());
                 if (itRaw->second) // Check the command existense
                     (itRaw->second)(*this, command[1]);
                 else
                     throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Command not implemented");
                 this->commandMiddlewares.callAfter(command.front());
-            } else {
+            }
+
+            // Error
+            else {
                 throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Unknow command");
             }
         } catch (const utils::exception::CustomException& e) {
             lastExceptionInfo = e.info();
             if (!(this->_flags & utils::cli::Flag::CATCH)) throw;
-            if (std::strcmp(lastExceptionInfo, "Unknow command") == 0 || std::strcmp(lastExceptionInfo, "Command not implemented") == 0) status = 1;
-            else status = 2;
+            if (e.getCode() == utils::exception::Code::CliParser) status = 1;
+            else if (std::strcmp(lastExceptionInfo, "Unknow command") == 0 || std::strcmp(lastExceptionInfo, "Command not implemented") == 0) status = 2;
+            else status = 3;
         } catch (const utils::exception::NoneException& e) {
             throw;
         } catch (const std::exception& e) {
             lastExceptionInfo = e.what();
             if (!(this->_flags & utils::cli::Flag::CATCH))
                 throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, std::string("Callback exception: ") + lastExceptionInfo);
-            status = 2;
+            status = 3;
+        }
+
+        // Display error
+        if (status != 0) {
+            switch (status) {
+                case 1: std::cout << lastExceptionInfo << std::endl; break; // Parser
+                case 2: std::cout << lastExceptionInfo << std::endl; break; // Execution
+                case 3: std::cout << "Callback exception: " << lastExceptionInfo << std::endl; break; // Other
+                default: // Unknow
+                    throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, "Callback exception: can't determine the error");
+            }
         }
 
         // Check the logic
@@ -403,12 +428,6 @@ hot void utils::cli::Cli::exec(const utils::cli::ParsedData& parsedInput)
             for (; i < parsedInput.size() && (parsedInput[i].back() == "&&" || parsedInput[i].back() == "||"); ++i);
         }
     }
-
-    // Throw if the last command have fail
-    if (status == 1)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, lastExceptionInfo);
-    else if (status == 2)
-        throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliExecution, std::string("Callback exception: ") + lastExceptionInfo);
 
     this->execMiddlewares.callAfter(parsedInput);
 }

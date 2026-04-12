@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 10/04/2026 by @author Tsukini
+##  @date 12/04/2026 by @author Tsukini
 
 File Name:
 ##  @file Hooks.cpp
@@ -66,13 +66,52 @@ static std::vector<std::string> splitCommands(const std::string& input)
 
 static std::vector<std::string> splitCommand(const std::string& command)
 {
-    std::istringstream iss(command);
     std::vector<std::string> splited;
-    std::string word;
+    std::string token;
 
-    // Separate on white space (' ', '\t')
-    while (iss >> word)
-        splited.push_back(word);
+    for (size_t i = 0; i < command.size(); ++i) {
+        char c = command[i];
+
+        // White space
+        if (c == ' ' || c == '\t') {
+            if (!token.empty()) {
+                splited.push_back(token);
+                token.clear();
+            }
+        }
+
+        // Separator "&&", "||", ";"
+        else if (c == '&' && i + 1 < command.size() && command[i + 1] == '&') {
+            if (!token.empty()) {
+                splited.push_back(token);
+                token.clear();
+            }
+            splited.push_back("&&");
+            ++i; // skip second char
+        } else if (c == '|' && i + 1 < command.size() && command[i + 1] == '|') {
+            if (!token.empty()) {
+                splited.push_back(token);
+                token.clear();
+            }
+            splited.push_back("||");
+            ++i; // skip second char
+        } else if (c == ';') {
+            if (!token.empty()) {
+                splited.push_back(token);
+                token.clear();
+            }
+            splited.push_back(";");
+        }
+
+        // Basic char
+        else likely {
+            token += c;
+        }
+    }
+
+    // Last part
+    if (!token.empty())
+        splited.push_back(token);
 
     return splited;
 }
@@ -99,8 +138,8 @@ hot utils::cli::ParsedData utils::cli::defaultParserHook(const std::string& inpu
         if (parse) {
             data.clear();
             data.push_back(splited.front());
-            for (const std::string& token: splited)
-                data.push_back(token);
+            for (std::size_t i = 0; i < splited.size() - (splited.back() == "&&" || splited.back() == "||" || splited.back() == ";"); ++i)
+                data.push_back(splited[i]);
             data.push_back((splited.back() == "&&" || splited.back() == "||" || splited.back() == ";") ? splited.back() : "");
             parsedInput.push_back(data);
         } else {
