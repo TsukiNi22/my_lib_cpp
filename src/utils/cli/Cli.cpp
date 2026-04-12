@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 12/04/2026 by @author Tsukini
+##  @date 13/04/2026 by @author Tsukini
 
 File Name:
 ##  @file Cli.cpp
@@ -221,7 +221,8 @@ hot nodiscard std::string utils::cli::Cli::getInput()
                 c = this->_getcHook();
                 this->inputMiddlewares.callAfter(c);
             } catch (const std::exception& e) {
-                throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
+                throw utils::exception::NoneException(utils::exception::Code::Exit);
+                //throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, e.what());
             }
         } else unlikely {
             throw utils::exception::CustomException(utils::exception::Type::Error, utils::exception::Code::CliHook, "Missing hook for char getter");

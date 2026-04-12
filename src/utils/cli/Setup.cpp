@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 12/04/2026 by @author Tsukini
+##  @date 13/04/2026 by @author Tsukini
 
 File Name:
 ##  @file Setup.cpp
@@ -41,10 +41,12 @@ utils::cli::Cli::Cli()
     this->resetMiddlewares();
 
     // Setup the term
-    tcgetattr(STDIN_FILENO, &this->_orig);
-    termios raw = this->_orig;
-    raw.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+    if (isatty(STDIN_FILENO)) {
+        tcgetattr(STDIN_FILENO, &this->_orig);
+        termios raw = this->_orig;
+        raw.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+    }
 
     // Signal handling
     std::signal(SIGINT, SIG_IGN); // ctrl+c
@@ -54,7 +56,8 @@ utils::cli::Cli::Cli()
 utils::cli::Cli::~Cli()
 {
     // Reset the term
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &this->_orig);
+    if (isatty(STDIN_FILENO))
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &this->_orig);
 
     // Reset signal
     std::signal(SIGINT, SIG_DFL); // ctrl+c
