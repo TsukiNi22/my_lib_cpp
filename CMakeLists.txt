@@ -49,7 +49,7 @@ add_library(${TARGET} STATIC ${SRC})
 # Dependencies
 # =========================
 add_custom_target(generated_exception_header ALL
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/cmake/script/generate_exception_header.py
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/cmake/scripts/generate_exception_header.py
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 add_dependencies(${TARGET} generated_exception_header)
@@ -72,6 +72,6 @@ target_compile_options(${TARGET} PRIVATE
 # Utils
 # =========================
 add_custom_target(get_unregistered_files
-    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/script/check_files.sh unregistered ${SRC}
+    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/scripts/check_files.sh unregistered ${SRC}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
