@@ -62,6 +62,7 @@ class Vector2: public utils::vector::IVector<T> {
         template<typename U>
         T dot(const Vector2<U>& v) const
         requires utils::concepts::MultipliableWith<T, U> && utils::concepts::AddableWith<T, U> {return x * v.x + y * v.y;}
+        template<typename U>
         T cross(const Vector2<U>& v) const
         requires utils::concepts::MultipliableWith<T, U> && utils::concepts::SubtractableWith<T, U> {return x * v.y - y * v.x;}
         T length() const

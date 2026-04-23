@@ -63,6 +63,16 @@ class Vector3: public utils::vector::IVector<T> {
         template<typename U>
         T dot(const Vector3<U>& v) const
         requires utils::concepts::MultipliableWith<T, U> && utils::concepts::AddableWith<T, U> {return x * v.x + y * v.y + z * v.z;}
+        template<typename U>
+        Vector3 cross(const Vector3<U>& v) const
+        requires utils::concepts::MultipliableWith<T, U> && utils::concepts::SubtractableWith<T, U>
+        {
+            return {
+                y * v.z - z * v.y,
+                z * v.x - x * v.z,
+                x * v.y - y * v.x
+            };
+        }
         T length() const
         requires utils::concepts::Multipliable<T> {return std::sqrt(x * x + y * y + z * z);}
         T lengthSquared() const
@@ -72,15 +82,6 @@ class Vector3: public utils::vector::IVector<T> {
         {
             T len = length();
             return Vector3(x / len, y / len, z / len);
-        }
-        Vector3 cross(const Vector3<U>& v) const
-        requires utils::concepts::MultipliableWith<T, U> && utils::concepts::SubtractableWith<T, U>
-        {
-            return {
-                y * v.z - z * v.y,
-                z * v.x - x * v.z,
-                x * v.y - y * v.x
-            };
         }
 
         // ------------ Operator ---------- //
