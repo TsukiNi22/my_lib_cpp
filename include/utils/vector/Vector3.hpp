@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 20/04/2026 by @author Tsukini
+##  @date 23/04/2026 by @author Tsukini
 
 File Name:
 ##  @file Vector3.hpp
@@ -72,6 +72,15 @@ class Vector3: public utils::vector::IVector<T> {
         {
             T len = length();
             return Vector3(x / len, y / len, z / len);
+        }
+        Vector3 cross(const Vector3<U>& v) const
+        requires utils::concepts::MultipliableWith<T, U> && utils::concepts::SubtractableWith<T, U>
+        {
+            return {
+                y * v.z - z * v.y,
+                z * v.x - x * v.z,
+                x * v.y - y * v.x
+            };
         }
 
         // ------------ Operator ---------- //
