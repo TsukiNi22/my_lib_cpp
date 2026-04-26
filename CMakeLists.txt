@@ -41,6 +41,10 @@ set(SRC
     src/utils/cli/Cli.cpp
     src/utils/cli/Setup.cpp
     src/utils/cli/Hooks.cpp
+
+    ## Warning
+    src/utils/warning/Observer.cpp
+    src/utils/warning/SharedObject.cpp
 )
 add_library(${TARGET} STATIC ${SRC})
 #add_library(${TARGET} SHARED ${SRC})
