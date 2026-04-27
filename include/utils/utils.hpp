@@ -89,6 +89,8 @@ File Description:
     #include "vector/IVector.hpp"   // utils::vector::IVector<T>
     #include "vector/Vector2.hpp"   // utils::vector::Vector2<T>
     #include "vector/Vector3.hpp"   // utils::vector::Vector3<T>
+    #include "vector/OVector2.hpp"  // utils::vector::OVector2<T>
+    #include "vector/OVector3.hpp"  // utils::vector::OVector3<T>
 #endif
 
 /* Concepts */
