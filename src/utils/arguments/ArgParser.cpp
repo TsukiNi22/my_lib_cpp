@@ -321,18 +321,29 @@ void utils::arguments::ArgParser::parseEnvironement(utils::arguments::ParsedUsag
         // try to find a corresponding flag
         if (!this->_flags.contains(id)) {
             if (mandatory) return;
-            else continue;
+            continue;
         }
 
-        // extract falg content
+        // extract flag content and check it's requirement (only 1 arg is allowed)
         const utils::arguments::Flag& flag = this->_flags.at(id);
+        if (flag.options.size() != 1) {
+            if (mandatory) return;
+            continue;
+        }
         auto [_, _, _, fenv] = flag.flag;
+        auto [_, _, check] = flag.options.front();
 
         // check if it's in the env
         std::optional<std::string> res = get_env(fenv);
         if (!res.has_value()) {
             if (mandatory) return;
-            else continue;
+            continue;
+        }
+
+        // check the value
+        if (check(*res).has_value()) {
+            if (mandatory) return;
+            continue;
         }
 
         // store the value
@@ -422,6 +433,9 @@ _nodiscard utils::arguments::ParsedUsages utils::arguments::ArgParser::parse(con
     // No compliant usage where found
     if (usages.size() == 0)
         throw utils::exception::ErrorException(utils::exception::InternalCode::NoCompliantUsage);
+
+    // Sort the usage from the one who match the most option to the least
+    std::stable_sort(usages.begin(), usages.end(), [](const ParsedUsage& lhs, const ParsedUsage& rhs) {return lhs.arguments.size() > rhs.arguments.size();});
 
     return usages;
 }

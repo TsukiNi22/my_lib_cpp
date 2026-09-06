@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [pre-release] (empty)
+### Changed
+- Change the ways the usages match are returned (sorted from more match to least) in the `ArgParser`
 
 ## [v2.13.1-pre] - 2026-09-06
 ### Added 

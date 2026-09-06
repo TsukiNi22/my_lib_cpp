@@ -136,7 +136,7 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
         std::cout << "\t\t" << flag.description << std::endl;
     }
     if (flags.size() == 0) std::cout << "\tNothing..." << std::endl;;
-    std::cout << utils::iomanip::reset();
+    std::cout << utils::iomanip::reset() << std::endl;
 
     std::cout << utils::iomanip::format("<strong>ENVIRONMENT<>") << std::endl;
     bool none = true;
@@ -144,12 +144,12 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
         const auto& [fshort, fflag, flong, fenv] = flag.flag;
         if (fenv.empty()) continue;
         none = false;
-        std::cout << utils::iomanip::color(utils::iomanip::Color::Green) << "\t" << fenv << std::endl;
-        std::cout << utils::iomanip::reset() << std::endl << "\t\t";
+        std::cout << utils::iomanip::color(utils::iomanip::Color::Green) << "\t" << fenv;
+        std::cout << utils::iomanip::reset() << " [";
         if (!fshort.empty()) std::cout << "-" << fshort;
         if (!fflag.empty())  std::cout << (fshort.empty() ? "" : ", ") << "-" << fflag;
         if (!flong.empty())  std::cout << ((fshort.empty() && fflag.empty()) ? "" : ", ") << "--" << flong;
-        std::cout << std::endl;
+        std::cout << "]" << std::endl;
     }
     if (none) std::cout << "\tNothing..." << std::endl;;
     std::cout << utils::iomanip::reset() << std::flush;
