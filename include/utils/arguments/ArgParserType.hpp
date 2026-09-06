@@ -62,6 +62,7 @@ struct Usage {
 
 struct Option {
     std::string name;
+    bool exact = false;
     std::function<std::optional<std::string>(const std::string&)> check;
     std::string description = "[None]";
 };

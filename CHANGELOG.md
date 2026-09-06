@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [pre-release] (empty)
+### Added 
+- Features for the `ArgParser` to handle raw text options
 
 ## [v2.13.2] - 2026-09-06
 ### Changed

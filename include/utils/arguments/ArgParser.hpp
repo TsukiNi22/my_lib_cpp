@@ -108,7 +108,16 @@ class ArgParser: private utils::security::observer::Observer<"ArgParser"> {
                 if (this->_options.contains(id) || this->_flags.contains(id))
                     throw utils::exception::ErrorException(utils::exception::InternalCode::Override, std::string("An option/flag with this id is already defined: ") + id);
             }
-            this->_options[id] = utils::arguments::Option{name, check, description};
+            this->_options[id] = utils::arguments::Option{name, false, check, description};
+        };
+        template<bool force = false> // Can't override an exiting one by default, throw of error
+        void setOption(const std::string& id, const std::string& name, const std::string& description = "[None]")
+        {
+            if constexpr (!force) {
+                if (this->_options.contains(id) || this->_flags.contains(id))
+                    throw utils::exception::ErrorException(utils::exception::InternalCode::Override, std::string("An option/flag with this id is already defined: ") + id);
+            }
+            this->_options[id] = utils::arguments::Option{name, true, utils::arguments::defaultTrueParsingHook, description};
         };
         void resetOptions(void) {this->_options.clear();};
         template<bool force = false> // Can't override an exiting one by default, throw of error

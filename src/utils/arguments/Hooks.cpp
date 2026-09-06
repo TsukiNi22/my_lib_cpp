@@ -72,7 +72,9 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
                 if (it == options.end() || it->second.name.empty()) continue;
                 std::cout << " ";
                 if (!mandatory) std::cout << "[";
-                std::cout << "<" << it->second.name << ">";
+                if (!it->second.exact) std::cout << "<";
+                std::cout << it->second.name;
+                if (!it->second.exact) std::cout << ">";
                 if (!mandatory) std::cout << "]";
             }
 

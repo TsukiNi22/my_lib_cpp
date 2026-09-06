@@ -272,7 +272,7 @@ bool utils::arguments::ArgParser::parseOption(utils::arguments::ParsedUsageFull&
 
     // Try to find the possible corresponding ids of the option
     for (const auto &[oid, opt]: this->_options)
-        if (!opt.check(option).has_value()) validIds.push_back(oid);
+        if ((opt.exact && option == opt.name) || (!opt.exact && !opt.check(option).has_value())) validIds.push_back(oid);
 
     // Check if the option is valid in any way
     if (validIds.size() == 0) {
