@@ -46,6 +46,11 @@
             "restrictions": ["Fatal", "Error"]
         },
         {
+            "code": "EPoll",
+            "message": "Error during the epoll call",
+            "restrictions": ["Fatal", "Error"]
+        },
+        {
             "code": "Accept",
             "message": "Error during the accept call",
             "restrictions": ["Fatal", "Error"]

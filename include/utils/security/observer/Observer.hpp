@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 31/07/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file Observer.hpp

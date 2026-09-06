@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 01/08/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file IObserver.hpp
@@ -25,8 +25,8 @@ namespace utils::security::observer { // namespace start
 class IObserver {
     protected:
         // ---------- Pre-Function -------- //
-        virtual void link(void) = 0;
-        virtual void unlink(void) = 0;
+        virtual void link_(void) = 0;
+        virtual void unlink_(void) = 0;
 
     public:
         // ------------ Operator ---------- //

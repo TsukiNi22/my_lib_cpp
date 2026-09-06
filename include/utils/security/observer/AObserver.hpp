@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 29/08/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file AObserver.hpp
@@ -38,13 +38,13 @@ class AObserver: public utils::security::observer::IObserver {
         std::string_view _instance = __instance__.view();
 
         // ------------ Function ---------- //
-        _hot void link(void) override
+        _hot void link_(void) override
         {
             utils::security::observer::instances::IdHandler.allocate(this->_id, __safe_mode__);
             for (std::unique_ptr<utils::security::observer::INotifier>& notifier: utils::security::observer::instances::Notifiers)
                 notifier->link(this->_id, this->_instance, __safe_mode__);
         };
-        _hot void unlink(void) override
+        _hot void unlink_(void) override
         {
             if (this->_id == 0) return; // Ignore thoese who where already realese/transfered
             for (std::unique_ptr<utils::security::observer::INotifier>& notifier: utils::security::observer::instances::Notifiers)
@@ -57,7 +57,7 @@ class AObserver: public utils::security::observer::IObserver {
         AObserver& operator=(_unused const AObserver& other) {return *this;};
         AObserver& operator=(AObserver&& other)
         {
-            this->unlink();
+            this->unlink_();
             this->_id = other._id;
             this->_instance = other._instance;
             other._id = 0;
@@ -65,12 +65,12 @@ class AObserver: public utils::security::observer::IObserver {
         };
 
         // ---------- Constructor --------- //
-        AObserver() {this->link();};
-        AObserver(_unused const AObserver& other) {this->link();};
+        AObserver() {this->link_();};
+        AObserver(_unused const AObserver& other) {this->link_();};
         AObserver(AObserver&& other): _id{other._id}, _instance{other._instance} {other._id = 0;};
 
         // ----------- Destructor --------- //
-        ~AObserver() {this->unlink();};
+        ~AObserver() {this->unlink_();};
 };
 
 } // namespace end

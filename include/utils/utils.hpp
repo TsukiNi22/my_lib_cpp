@@ -1,6 +1,6 @@
 /**************************************************************\
 Edition:
-##  @date 29/08/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file utils.hpp
@@ -245,6 +245,7 @@ File Description:
     #include "encapsulation/Dup.hpp"            // utils::encapsulation::Dup
     #include "encapsulation/Process.hpp"        // utils::encapsulation::Process
     #include "encapsulation/SharedMemory.hpp"   // utils::encapsulation::SharedMemory
+    #include "encapsulation/Poll.hpp"           // utils::encapsulation::Poll
 #endif
 
 /* System */
