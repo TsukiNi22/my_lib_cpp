@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [pre-release] (empty)
+
+## [v2.13.2] - 2026-09-06
 ### Changed
 - Change the ways the usages match are returned (sorted from more match to least) in the `ArgParser`
 
@@ -125,7 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial version of the utils library with multiple tools (see [README-1.0.0](https://github.com/TsukiNi22/libutils/blob/v1.0.0/README.md) for more details)
 
-[pre-release]: https://github.com/TsukiNi22/libutils/compare/v2.13.1-pre...HEAD
+[pre-release]: https://github.com/TsukiNi22/libutils/compare/v2.13.2...HEAD
+[v2.13.2]: https://github.com/TsukiNi22/libutils/compare/v2.13.1-pre...v2.13.2
 [v2.13.1-pre]: https://github.com/TsukiNi22/libutils/compare/v2.12.2-pre...v2.13.1-pre
 [v2.12.2-pre]: https://github.com/TsukiNi22/libutils/compare/v2.11.0-pre...v2.12.2-pre
 [v2.11.0-pre]: https://github.com/TsukiNi22/libutils/compare/v2.10.1-pre...v2.11.0-pre
