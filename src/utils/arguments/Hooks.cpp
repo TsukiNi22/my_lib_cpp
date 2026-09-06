@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 20/07/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file Hooks.cpp
@@ -79,7 +79,7 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
             else if (flags.contains(id)) {
                 auto it = flags.find(id);
                 if (it == flags.end()) continue;
-                const auto& [fshort, fflag, flong] = it->second.flag;
+                const auto& [fshort, fflag, flong, _] = it->second.flag;
                 if (fshort.empty() && fflag.empty() && flong.empty()) continue;
                 std::cout << " ";
                 if (!mandatory) std::cout << "[";
@@ -100,7 +100,7 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
     if (defaultUsage || usages.size() == 0) { // Default usage (all flag authorized, dosen't know option position)
         std::cout << "\t" << std::left << std::setw(maxNameLen) << "(default)" << " -> ./" << parser.getBinary();
         for (const auto& [_, flag]: parser.getFlags()) {
-            const auto& [fshort, fflag, flong] = flag.flag;
+            const auto& [fshort, fflag, flong, _] = flag.flag;
             if (fshort.empty() && fflag.empty() && flong.empty()) continue;
             std::cout << " " << ((fshort.empty() && fflag.empty()) ? "--" : "-") << (fshort.empty() ? (fflag.empty() ? flong : fflag) : fshort);
             for (const auto& [name, mandatory, _]: flag.options)
@@ -122,7 +122,7 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
     std::cout << utils::iomanip::color(utils::iomanip::Color::Green) << "\t" << "-h, -help, --help" << utils::iomanip::reset() << std::endl;
     std::cout << "\t\t" << "Display this help and exit" << std::endl;
     for (const auto& [_, flag]: flags) {
-        const auto& [fshort, fflag, flong] = flag.flag;
+        const auto& [fshort, fflag, flong, _] = flag.flag;
         std::cout << utils::iomanip::color(utils::iomanip::Color::Green) << "\t";
         if (!fshort.empty()) std::cout << "-" << fshort;
         if (!fflag.empty())  std::cout << (fshort.empty() ? "" : ", ") << "-" << fflag;
@@ -136,6 +136,22 @@ void utils::arguments::defaultHelpHook(const utils::arguments::ArgParser& parser
         std::cout << "\t\t" << flag.description << std::endl;
     }
     if (flags.size() == 0) std::cout << "\tNothing..." << std::endl;;
+    std::cout << utils::iomanip::reset();
+
+    std::cout << utils::iomanip::format("<strong>ENVIRONMENT<>") << std::endl;
+    bool none = true;
+    for (const auto& [_, flag]: parser.getFlags()) {
+        const auto& [fshort, fflag, flong, fenv] = flag.flag;
+        if (fenv.empty()) continue;
+        none = false;
+        std::cout << utils::iomanip::color(utils::iomanip::Color::Green) << "\t" << fenv << std::endl;
+        std::cout << utils::iomanip::reset() << std::endl << "\t\t";
+        if (!fshort.empty()) std::cout << "-" << fshort;
+        if (!fflag.empty())  std::cout << (fshort.empty() ? "" : ", ") << "-" << fflag;
+        if (!flong.empty())  std::cout << ((fshort.empty() && fflag.empty()) ? "" : ", ") << "--" << flong;
+        std::cout << std::endl;
+    }
+    if (none) std::cout << "\tNothing..." << std::endl;;
     std::cout << utils::iomanip::reset() << std::flush;
 }
 

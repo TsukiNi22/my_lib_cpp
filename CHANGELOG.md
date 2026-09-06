@@ -20,6 +20,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [pre-release] (empty)
 
+## [v2.13.1-pre] - 2026-09-06
+### Added 
+- Features for the `ArgParser` to handle environement variables
+- Add of encapsulation for `Poll` (epoll is used internaly)
+
 ## [v2.12.2-pre] - 2026-09-05
 ### Changed
 - Change naming policy for normal function/tools without class <name>(<Name>)* -> <name>(_<name>)*
@@ -118,7 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial version of the utils library with multiple tools (see [README-1.0.0](https://github.com/TsukiNi22/libutils/blob/v1.0.0/README.md) for more details)
 
-[pre-release]: https://github.com/TsukiNi22/libutils/compare/v2.12.2-pre...HEAD
+[pre-release]: https://github.com/TsukiNi22/libutils/compare/v2.13.1-pre...HEAD
+[v2.13.1-pre]: https://github.com/TsukiNi22/libutils/compare/v2.12.2-pre...v2.13.1-pre
 [v2.12.2-pre]: https://github.com/TsukiNi22/libutils/compare/v2.11.0-pre...v2.12.2-pre
 [v2.11.0-pre]: https://github.com/TsukiNi22/libutils/compare/v2.10.1-pre...v2.11.0-pre
 [v2.10.1-pre]: https://github.com/TsukiNi22/libutils/compare/v2.9.2...v2.10.1-pre

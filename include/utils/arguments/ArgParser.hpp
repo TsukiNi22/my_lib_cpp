@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 20/08/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file ArgParser.hpp
@@ -69,6 +69,7 @@ class ArgParser: private utils::security::observer::Observer<"ArgParser"> {
         /* sub parsing */
         bool parseFlags(utils::arguments::ParsedUsageFull& usagesFull, const std::vector<std::string>& argv, std::size_t& i, bool& alreadyFailed, const bool failsafe = false) const;
         bool parseOption(utils::arguments::ParsedUsageFull& usagesFull, const std::vector<std::string>& argv, const std::size_t i, bool& alreadyFailed, const bool failsafe = false) const;
+        void parseEnvironement(utils::arguments::ParsedUsageFull& usagesFull) const noexcept;
 
     public:
         // ---------- Pre-Function -------- //
@@ -111,7 +112,7 @@ class ArgParser: private utils::security::observer::Observer<"ArgParser"> {
         };
         void resetOptions(void) {this->_options.clear();};
         template<bool force = false> // Can't override an exiting one by default, throw of error
-        void setFlag(const std::string& id, const std::tuple<std::string, std::string, std::string>& flag, const std::vector<std::tuple<std::string, bool, std::function<std::optional<std::string>(const std::string&)>>>& options, const std::string& description = "[None]", const bool unlimited = false)
+        void setFlag(const std::string& id, const std::tuple<std::string, std::string, std::string, std::string>& flag, const std::vector<std::tuple<std::string, bool, std::function<std::optional<std::string>(const std::string&)>>>& options, const std::string& description = "[None]", const bool unlimited = false)
         {
             if constexpr (!force) {
                 if (this->_flags.contains(id) || this->_options.contains(id))

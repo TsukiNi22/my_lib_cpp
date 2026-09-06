@@ -8,7 +8,7 @@
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
 Edition:
-##  @date 25/07/2026 by @author Tsukini
+##  @date 06/09/2026 by @author Tsukini
 
 File Name:
 ##  @file ArgParser.cpp
@@ -27,6 +27,7 @@ File Description:
 #include <algorithm>
 #include <iostream>
 #include <optional>
+#include <cstdlib>
 #include <vector>
 #include <string>
 
@@ -120,7 +121,7 @@ bool utils::arguments::ArgParser::parseFlags(utils::arguments::ParsedUsageFull& 
 
         // Is the flag know
         for (const auto &[fid, flag]: this->_flags) {
-            const auto &[_, _, flong] = flag.flag;
+            const auto &[_, _, flong, _] = flag.flag;
             if (flong == arg) {ids.push_back(fid); unknow = false; break;}
         }
     }
@@ -132,7 +133,7 @@ bool utils::arguments::ArgParser::parseFlags(utils::arguments::ParsedUsageFull& 
 
         // Is the flag know (Flag have the priority)
         for (const auto &[fid, flag]: this->_flags) {
-            const auto &[fshort, fflag, _] = flag.flag;
+            const auto &[fshort, fflag, _, _] = flag.flag;
             if (fflag == arg) {ids.push_back(fid); unknow = false; break;}
             else if ((pos = sarg.find(fshort)) != std::string::npos) {
                 ids.push_back(fid);
@@ -305,6 +306,42 @@ bool utils::arguments::ArgParser::parseOption(utils::arguments::ParsedUsageFull&
     return true;
 }
 
+_hot _nodiscard static std::optional<std::string> get_env(const std::string& name)
+{
+    const char* value = std::getenv(name.c_str());
+    if (value == nullptr) return std::nullopt;
+    return std::string(value);
+}
+
+void utils::arguments::ArgParser::parseEnvironement(utils::arguments::ParsedUsageFull& usageFull) const noexcept
+{
+    std::vector<std::string> validIds;
+
+    for (const auto &[id, mandatory]: usageFull.ids) {
+        // try to find a corresponding flag
+        if (!this->_flags.contains(id)) {
+            if (mandatory) return;
+            else continue;
+        }
+
+        // extract falg content
+        const utils::arguments::Flag& flag = this->_flags.at(id);
+        auto [_, _, _, fenv] = flag.flag;
+
+        // check if it's in the env
+        std::optional<std::string> res = get_env(fenv);
+        if (!res.has_value()) {
+            if (mandatory) return;
+            else continue;
+        }
+
+        // store the value
+        usageFull.arguments.emplace_back(id, false, std::vector<std::string>{*res});
+        while (usageFull.ids.front().first != id) usageFull.ids.pop_front();
+        usageFull.ids.pop_front();
+    }
+}
+
 _nodiscard utils::arguments::ParsedUsages utils::arguments::ArgParser::parse(const int argc, const char *const argv[], const bool failsafe) const
 {
     std::vector<std::string> args(argv, argv + argc);
@@ -363,6 +400,10 @@ _nodiscard utils::arguments::ParsedUsages utils::arguments::ArgParser::parse(con
             usagesFull.end()
         );
     }
+
+    // try to find the environement var still not found and asked (failsafe, no warning or error)
+    for (utils::arguments::ParsedUsageFull& usageFull: usagesFull)
+        this->parseEnvironement(usageFull);
 
     // Remove thoses who aren't fully done (still mandatory thing to parse)
     usagesFull.erase(
